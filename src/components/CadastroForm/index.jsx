@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button'
 import HttpService from '../../services/HttpService';
 
 
-export default class CadastroForm extends Component {
+export default class CadastroAlunos extends Component {
 
   constructor(props){
     super(props);

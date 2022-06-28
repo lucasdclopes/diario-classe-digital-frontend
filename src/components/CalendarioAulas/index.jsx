@@ -62,27 +62,6 @@ export default class CalendarioAulas extends Component {
         this.state.filtros.idProfessor = userLogado.getIdCadastro();
     }
 
-    this.enviarDados = (e) => {
-      e.preventDefault(); // Cancela a ação padrão do submit    
-
-      HttpService.cadastrarUsuario(this.state.email, this.state.senha)
-      .then((response) => {
-        if (response.data.sucesso){
-          alert(response.data.mensagem)
-        }
-        else {
-          alert("Por algum motivo o usuário não foi cadastrado. Por favor, tente mais tarde.");
-        }
-        
-      })
-      .catch((error) => {
-        console.log("error -> ",error.response)
-        // Desenvolve a lógica do erro aqui
-      });
-
-      return true;
-    }
-
     this.definirFiltroInicial();
 
     this.obterLista = () => {

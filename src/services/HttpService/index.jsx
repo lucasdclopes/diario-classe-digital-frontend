@@ -3,8 +3,8 @@ import UsuarioLogadoDto from '../../dto/UsuarioLogadoDto';
 
 
 const host = window.location.protocol + "//" + window.location.host;
-//const urlBase = 'http://localhost:8080/api'; //<- testes local
-const urlBase = host + '/api'; //<- build acesso na rede
+const urlBase = 'http://localhost:8080/api'; //<- testes local
+//const urlBase = host + '/api'; //<- build acesso na rede
 const defaultHeaders = {
   headers : {
     "Content-Type": "application/json",
@@ -170,6 +170,32 @@ export default class HttpService{
 
   static calcularFaltasAluno = async (idAluno) => {
     let url = urlBase + '/alunos/' +idAluno + '/calculo-faltas';
+    let response = await axios.get(url,defaultConfig);
+    return response;
+  }
+
+  static listarAlunos = async (filtros) => {
+    let url = urlBase + '/alunos';
+    let queryParams = [];
+
+    if (filtros.descTurma) {
+      queryParams.push('cpf=' + filtros.cpf);
+    }
+    if (filtros.tpPeriodo) {
+      queryParams.push('nome=' + filtros.tpPeriodo);
+    }
+    if (filtros.paginacaoRequest) {
+      queryParams.push(HttpService.queryPaginacao(filtros.paginacaoRequest));
+    }
+
+    url += HttpService.gerarParams(queryParams);
+
+    let response = await axios.get(url,defaultConfig);
+    return response;
+  }
+
+  static exibirAluno = async (idAluno) => {
+    let url = urlBase + '/alunos/' +idAluno;
     let response = await axios.get(url,defaultConfig);
     return response;
   }

@@ -40,6 +40,7 @@ export default class MenuLogado extends Component {
             <Offcanvas.Body>
               <Nav className="justify-content-end flex-grow-1 pe-3">
                 <Link className="linkMenu" to={"/"}>Home</Link>
+                <Link className="linkMenu" to={"/cadastro-alunos"}>Cadastro Alunos</Link>
                 <Link className="linkMenu" to={"/calendario-aulas"}>Calendário de Aulas</Link>
                 <Link className="linkMenu" to={"/lista-aulas"}>Lista de Aulas</Link>
                 <Link className="linkMenu" to={"/lista-turmas"}>Lista de Turmas</Link>

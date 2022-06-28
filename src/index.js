@@ -20,6 +20,8 @@ import ListaAulas from './components/ListaAulas';
 import ListaTurmas from './components/ListaTurmas';
 import Turma from './components/Turma';
 
+import CadastroAlunos from './components/CadastroAlunos';
+
 
 
 ReactDOM.render(
@@ -29,6 +31,7 @@ ReactDOM.render(
       <Route path="/login" element={<Login />}></Route>
       <Route path="/aula" element={<Aula />}></Route>
       <Route path="/area-do-usuario" element={<AreaDoUsuario/>}></Route>
+      <Route path="/cadastro-alunos" element={<CadastroAlunos />}></Route>
       <Route path="/calendario-aulas" element={<CalendarioAulas />}></Route>
       <Route path="/lista-aulas" element={<ListaAulas />}></Route>
       <Route path="/lista-turmas" element={<ListaTurmas />}></Route>
