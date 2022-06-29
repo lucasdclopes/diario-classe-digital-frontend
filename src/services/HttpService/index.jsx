@@ -178,11 +178,17 @@ export default class HttpService{
     let url = urlBase + '/alunos';
     let queryParams = [];
 
-    if (filtros.descTurma) {
+    if (filtros.cpf) {
       queryParams.push('cpf=' + filtros.cpf);
     }
-    if (filtros.tpPeriodo) {
-      queryParams.push('nome=' + filtros.tpPeriodo);
+    if (filtros.nome) {
+      queryParams.push('nome=' + filtros.nome);
+    }
+    if (filtros.nomeMae) {
+      queryParams.push('nomeMae=' + filtros.nomeMae);
+    }
+    if (filtros.nomePai) {
+      queryParams.push('nomePai=' + filtros.nomePai);
     }
     if (filtros.paginacaoRequest) {
       queryParams.push(HttpService.queryPaginacao(filtros.paginacaoRequest));
@@ -193,6 +199,25 @@ export default class HttpService{
     let response = await axios.get(url,defaultConfig);
     return response;
   }
+
+  static deletarAluno = async (idAluno) => {
+    console.log("vou deletar o aluno "+idAluno);
+    let url = urlBase + '/alunos/' +idAluno;
+    let response = await axios.delete(url,defaultConfig);
+    return response;
+  }
+
+  static salvarAluno =  (postData,idAluno) => {
+    let url = urlBase + '/alunos/'+ ((idAluno && idAluno != 0) ? idAluno : "");
+    let config = defaultConfig;
+    if (idAluno != 0) {
+      return axios.put(url,postData,config);
+    }
+    else {
+      return axios.post(url,postData,config);
+    }
+  }
+
 
   static exibirAluno = async (idAluno) => {
     let url = urlBase + '/alunos/' +idAluno;

@@ -11,7 +11,7 @@ export default class HttpServiceHandler  extends Component {
 
       if (response.status == 422){
         response.data.forEach((erro) => {          
-          mensagemErro += (erro.campo ? erro.campo + ' - ' : '') + erro.mensagemErro + ";";
+          mensagemErro += (erro.campo ? erro.campo + ' - ' : '') + erro.mensagemErro + "; ";
         })
       }
       else {
