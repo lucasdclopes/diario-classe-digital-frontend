@@ -11,16 +11,12 @@
   margin-left: 20px;
 }
 
+.btnCancelar {
+  margin-left: 20px;
+}
+
 .inputNovoAluno {
   margin-bottom: 20px;
-}
-
-.btnParamBusca {
-  background-color: blue;
-}
-
-.btnParamBusca2 {
-  background-color:chartreuse;
 }
 
 .form-inline {

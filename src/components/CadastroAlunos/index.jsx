@@ -502,7 +502,7 @@ export default class CadastroAlunos extends Component{
                     <div>
                         <br/>
                         <FloatingLabel className="inputNovoAluno" controlId="floatingSelectGrid" label="Sexo">
-                          <Form.Select aria-label="Floating label" onChange={this.handleChange}>
+                          <Form.Select aria-label="Floating label" onChange={this.handleChange} value={this.state.sexo}>
                             <option value="">Nenhum</option>
                             <option value="MASCULINO">Masculino</option>
                             <option value="FEMININO">Feminino</option>
@@ -665,7 +665,7 @@ export default class CadastroAlunos extends Component{
                     <div>
                       <br/>
                       <FloatingLabel className="inputNovoAluno" controlId="floatingSelectGrid" label="UF">
-                        <Form.Select aria-label="Floating label" onChange={this.handleChange}>
+                        <Form.Select aria-label="Floating label" onChange={this.handleChange}  value={this.state.endUF}>
                         <option value="AC">Acre</option> <option value="AL">Alagoas</option> <option value="AP">Amapá</option> <option value="AM">Amazonas</option> <option value="BA">Bahia</option> 
                         <option value="CE">Ceará</option> <option value="DF">Distrito Federal</option> <option value="ES">Espírito Santo</option> <option value="GO">Goiás</option> 
                         <option value="MA">Maranhão</option> <option value="MT">Mato Grosso</option> <option value="MS">Mato Grosso do Sul</option> <option value="MG">Minas Gerais</option> 
