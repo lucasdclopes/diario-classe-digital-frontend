@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Container, Table, Form, Row, Col } from 'react-bootstrap';
+import { Container, Table, Form, Row, Col, InputGroup, FormControl, ButtonGroup, ToggleButton } from 'react-bootstrap';
 import './index.css';
 import queryString from 'query-string';
 import HttpService from '../../services/HttpService';
@@ -43,7 +43,9 @@ export default class CadastroAlunos extends Component{
       nroMatricula : null,
       dtMatricula : null,
       ra : null,
-      alunos : [],      
+      alunos : [],    
+      textoBusca : null, 
+      paramBusca : null, 
       filtros : {
         cpf : null,
         nome : null,
@@ -92,36 +94,6 @@ export default class CadastroAlunos extends Component{
       });
     }
 
-    this.obterLista = () => {
-      HttpService.listarAlunos(this.state.filtros)
-      .then((response) => {
-        if (response){
-          this.setState(prevState => ({
-            ...prevState,
-            alunos : response.data,
-            filtros : {
-              ...prevState.filtros,
-              paginacaoResponse : {
-                quantidade : parseInt(response.headers['page-quantidade']),
-                hasProxima : response.headers['page-has-proxima'] === 'true' ? true : false
-              }
-            }
-          }));
-        }
-      })
-      .catch((error) => {
-        let httpServiceHandler = new HttpServiceHandler();
-        httpServiceHandler.validarExceptionHTTP(error.response,this);
-
-        if (error.response.status == 404){
-          this.setState(prevState => ({
-            ...prevState,
-            alunos : []
-          }));
-        }
-      })
-    }
-
     this.selecionarPagina = (numeroPagina) => {
       this.setState(prevState => ({
         ...prevState,
@@ -155,6 +127,38 @@ export default class CadastroAlunos extends Component{
           show : false
         }
       });
+    }
+
+    this.obterLista = () => {
+      console.log('obterLista');
+      HttpService.listarAlunos(this.state.filtros)
+      .then((response) => {
+        if (response){
+          this.setState(prevState => ({
+            ...prevState,
+            alunos : response.data,
+            filtros : {
+              ...prevState.filtros,
+              paginacaoResponse : {
+                quantidade : parseInt(response.headers['page-quantidade']),
+                hasProxima : response.headers['page-has-proxima'] === 'true' ? true : false
+              }
+            }
+          }));
+        }
+      })
+      .catch((error) => {
+        let httpServiceHandler = new HttpServiceHandler();
+        httpServiceHandler.validarExceptionHTTP(error.response,this);
+
+        if (error.response.status == 404){
+          this.setState(prevState => ({
+            ...prevState,
+            alunos : []
+          }));
+        }
+      })
+      this.limparFiltros();
     }
 
     this.abrirConfirmacaoModal = () => {
@@ -266,16 +270,6 @@ export default class CadastroAlunos extends Component{
       });
     }
 
-     this.handleChange = (e) => {
-      const name = e.target.name;
-      const value =
-      e.target.type === "checkbox" ? e.target.checked : e.target.value;
-      this.setState(prevState => ({
-        ...prevState,
-        [name]: value
-      }));
-    }
-
     this.salvarAluno = (e) => {
 
       HttpService.salvarAluno({
@@ -337,8 +331,130 @@ export default class CadastroAlunos extends Component{
       this.abrirConfirmacaoModal();
     }
 
-    
+    this.buscarAluno = (e) => {
+
+      
+      console.log('paramBusca ' + this.state.paramBusca);
+      console.log('textoBusca ' + this.state.textoBusca);
+      console.log('filtros ' + this.state.filtros);
+
+      let textoParaBusca = this.state.textoBusca;
+
+
+      if (this.state.textoBusca === null){
+        console.log('this.state.textoBusca === null ');
+        this.setState(prevState => ({
+          ...prevState
+          }
+        ),() => {this.obterLista();}
+        );
+        return;
+      }
+
+      switch (this.state.paramBusca) {
+        case '1':
+          console.log('s1');
+          this.setState(prevState => ({
+            ...prevState,
+            filtros : {
+              ...prevState.filtros,
+              nome : textoParaBusca
+              }
+            }
+          ),() => {this.obterLista();}
+          );
+          break;
+        case '2':
+          console.log('s2');
+          this.setState(prevState => ({
+            ...prevState,
+            filtros : {
+              ...prevState.filtros,
+              cpf : textoParaBusca
+              }
+            }
+            ),() => {this.obterLista();}
+            );
+          break;
+        case '3':
+          console.log('s3');
+          this.setState(prevState => ({
+            ...prevState,
+            filtros : {
+              ...prevState.filtros,
+              nomeMae : textoParaBusca
+              }
+            }
+            ),() => {this.obterLista();}
+            );
+          break;
+        case '4':
+          console.log('s4');
+          this.setState(prevState => ({
+            ...prevState,
+            filtros : {
+              ...prevState.filtros,
+              nomePai : textoParaBusca
+              }
+            }
+            ),() => {this.obterLista();}
+            );
+          break;
+        default:
+          console.log('sd');
+          this.setState(prevState => ({
+            ...prevState,
+            paramBusca: 1,
+            filtros : {
+              ...prevState.filtros,
+              nome : textoParaBusca
+              }
+            }
+            ),() => {this.obterLista();}
+            );
+        } 
+    }
+
+    this.handleChange = (e) => {
+      const name = e.target.name;
+      const value =
+      e.target.type === "checkbox" ? e.target.checked : e.target.value;
+      this.setState(prevState => ({
+        ...prevState,
+        [name]: value
+      }));
+
+      console.log(this.state.paramBusca);
+      console.log(e.target.type);
+      console.log(e.target.value);
+      console.log('e.target.name ' + e.target.name);
+    }
+
+    this.radiosBusca = [
+      { name: 'Nome', value: '1' },
+      { name: 'CPF', value: '2' },
+      { name: 'Nome da Mãe', value: '3' },
+      { name: 'Nome do Pai', value: '4' },
+    ];
+
+  
+    this.limparFiltros = (e) => {
+      console.log('limpando');
+      this.setState(prevState => ({
+        ...prevState,
+        filtros : {
+          ...prevState.filtros,
+          cpf : null,
+          nome : null,
+          nomePai : null,
+          nomeMae : null  
+          }
+        }
+      ));
+    }
+
   }
+
 
   
 
@@ -531,7 +647,7 @@ export default class CadastroAlunos extends Component{
                   <Col>  
                   <Form.Label>Cidade</Form.Label>
                   <Form.Control type="text" placeholder={"São Paulo"} disabled={!this.state.isEdicao}  
-                  onChange={this.handleChange} value={this.state.endCidade} name="eendCidadend" required autoComplete="false"
+                  onChange={this.handleChange} value={this.state.endCidade} name="endCidade" required autoComplete="false"
                   />    
                   </Col>  
                   <Col>                    
@@ -570,15 +686,53 @@ export default class CadastroAlunos extends Component{
             </Col>
           </Row>
 
-          <Row>
+          <Row className="mb-3">
             <Col xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
-              <Button onClick={this.novoAluno} disabled={this.state.isEdicao}>Nova</Button>
+              <Button onClick={this.novoAluno} disabled={this.state.isEdicao}>Novo</Button>
               <Button variant="success" className="btnSalvarAluno" onClick={this.salvarAluno} disabled={!this.state.isEdicao}>Salvar</Button>
               <Button variant="secondary" className="btnCancelar" onClick={() => {window.location = './cadastro-alunos'}} disabled={!this.state.isEdicao}>Cancelar</Button>
-              <Button variant="danger" className="btnDeletarAluno" onClick={this.deletarAluno} disabled={this.state.idAluno == 0}>Deletar</Button>
-              
+              <Button variant="danger" className="btnDeletarAluno" onClick={this.deletarAluno} disabled={this.state.idAluno == 0}>Deletar</Button>            
             </Col>
           </Row>
+
+
+          <Col style={{marginTop : "60px"}} xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
+          <InputGroup >
+            <FormControl 
+              placeholder="Buscar pela opção abaixo"
+              aria-label="Buscar pela opção abaixo"
+              aria-describedby="Buscar"
+              name = "textoBusca"
+              value = {this.textoBusca}
+              onChange={this.handleChange} 
+            />
+
+            <Button id="btnBuscar"
+             onClick={this.buscarAluno}
+            >
+              Buscar
+            </Button>
+          </InputGroup>
+          </Col>
+
+          <Col style={{marginTop : "60px"}} xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
+          <ButtonGroup>
+            {this.radiosBusca.map((radio, idx) => (
+              <ToggleButton
+                key={idx}
+                id={`radio-${idx}`}
+                type="radio"
+                variant={this.state.paramBusca === radio.value ? 'outline-primary' : 'outline-secondary'}
+                name="paramBusca"
+                value={radio.value}
+                checked={this.state.paramBusca === radio.value}
+                onChange={this.handleChange}
+              >
+                {radio.name}
+              </ToggleButton>
+            ))}
+          </ButtonGroup>
+          </Col>
 
           <Row style={{marginTop : "60px"}}>
             <Col xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
@@ -630,33 +784,6 @@ export default class CadastroAlunos extends Component{
                   </Button>
               </Modal.Footer>
               </Modal>
-
-              <Modal show={this.state.faltasAlunoModal.show} onHide={this.fecharFaltasAlunoModal}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Total de faltas</Modal.Title>
-                </Modal.Header>
-                {this.state.faltasAlunoModal.detalhesAluno &&
-                <Modal.Body>
-                    <h5>Data da consulta: {DateHelper.dateParaFormatoPtBr(new Date())}</h5>
-                    <br/>
-                    <h5>Informações do aluno:</h5>
-                    <br/>
-                    <p><strong>Total de faltas</strong>: {this.state.faltasAlunoModal.detalhesAluno.totalFaltas}</p>
-                    <p><strong>Nome</strong>: {this.state.faltasAlunoModal.detalhesAluno.nome} </p>
-                    <p><strong>CPF</strong>: {this.state.faltasAlunoModal.detalhesAluno.cpf} </p>
-                    <p><strong>Data de Nascimento</strong>: {this.state.faltasAlunoModal.detalhesAluno.dtNascimento}</p>
-                    <p><strong>Sexo</strong>: {this.state.faltasAlunoModal.detalhesAluno.sexo}</p>
-                    <p><strong>Número de Matricula</strong>: {this.state.faltasAlunoModal.detalhesAluno.nroMatricula}</p>
-                    <p><strong>Número de RA</strong>: {this.state.faltasAlunoModal.detalhesAluno.ra}</p>
-                    <p><strong>Email</strong>: {this.state.faltasAlunoModal.detalhesAluno.emailContato}</p>
-                </Modal.Body>
-                }
-                <Modal.Footer>
-                  <Button variant="secondary" onClick={this.fecharFaltasAlunoModal}>
-                  Fechar
-                  </Button>
-                </Modal.Footer>
-            </Modal>
             
             <ErroModal closeErroModal={this.closeErroModal} erroModal={this.state.erroModal}/>
             <ConfirmacaoModal closeConfirmacaoModal={this.closeConfirmacaoModal} handleSimConfirmacaoModal={this.handleSimConfirmacaoModal} confirmacaoModal={this.state.confirmacaoModal}></ConfirmacaoModal>
