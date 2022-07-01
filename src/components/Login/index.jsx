@@ -81,7 +81,7 @@ export default class Login extends Component {
                 <Form.Label>Email de acesso</Form.Label>
                 <Form.Control type="email" placeholder="exemplo@outlook.com" onChange={this.handleEmaiLogin} value={this.state.emailLogin} required autoComplete="false" />
                 <Form.Text className="text-muted">
-                  Nós nunca iremos compartilhar seu e-mail com outras pessoas.
+                  Insira o login
                 </Form.Text>
               </Form.Group>
 

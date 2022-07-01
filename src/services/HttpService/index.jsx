@@ -3,7 +3,7 @@ import UsuarioLogadoDto from '../../dto/UsuarioLogadoDto';
 
 
 const host = window.location.protocol + "//" + window.location.host;
-const urlBase = 'http://localhost:8080/api'; //<- testes local
+const urlBase = 'http://localhost/api'; //<- testes local
 //const urlBase = host + '/api'; //<- build acesso na rede
 const defaultHeaders = {
   headers : {

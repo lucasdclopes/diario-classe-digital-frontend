@@ -25,19 +25,19 @@ export default class CadastroAlunos extends Component{
       cpf : "",
       rg : "",
       dtNascimento : "",
-      sexo : "",
+      sexo : "MASCULINO",
       nomeMae : "",
       cpfMae : "",
-      telDDDMae : "",
-      telNroMae : "",
+      telDDDMae : "00",
+      telNroMae : "00",
       nomePai : "",
       cpfPai : "",
-      telDDDPai : "",
-      telNroPai : "",
+      telDDDPai : "00",
+      telNroPai : "00",
       emailContato : "",
-      celDDD : "",
+      celDDD : "00",
       celNro : "", 
-      telDDD : "",
+      telDDD : "00",
       telNro : "",
       endLogradouro : "",
       endNumero : "",
@@ -50,7 +50,7 @@ export default class CadastroAlunos extends Component{
       dtMatricula : "",
       nis : "",
       transportador : "",
-      telDDDTransportador : "",
+      telDDDTransportador : "00",
       telNroTransportador : "", 
       unidadeEscolar : "",
       ubsRef : "",   
@@ -269,8 +269,8 @@ export default class CadastroAlunos extends Component{
           telNroPai : data.pai === null? null : data.pai.telContato === null? null : data.pai.telContato.telNro,
 
           emailContato : data.emailContato,
-          celDDD : data.telCelular !== null? data.telCelular.celDDD : null,
-          celNro : data.telCelular !== null? data.telCelular.celNro : null,
+          celDDD : data.telCelular !== null? data.telCelular.telDDD : null,
+          celNro : data.telCelular !== null? data.telCelular.telNro : null,
           telDDD : data.telFixo !== null? data.telFixo.telDDD : null,
           telNro : data.telFixo !== null? data.telFixo.telNro : null,
 
@@ -327,7 +327,7 @@ export default class CadastroAlunos extends Component{
             }
         },
         telCelular : { 
-          telDDD : this.state.telDDD,telNro : this.state.telNro
+          telDDD : this.state.celDDD,telNro : this.state.celNro
         },
         telFixo : { 
           telDDD : this.state.telDDD,telNro : this.state.telNro
@@ -546,20 +546,20 @@ export default class CadastroAlunos extends Component{
         cpf : "",
         rg : "",
         dtNascimento : "",
-        sexo : "",
+        sexo : "MASCULINO",
         nomeMae : "",
         cpfMae : "",
-        telDDDMae : "",
-        telNroMae : "",
+        telDDDMae : "00",
+        telNroMae : "00",
         nomePai : "",
         cpfPai : "",
-        telDDDPai : "",
-        telNroPai : "",
+        telDDDPai : "00",
+        telNroPai : "00",
         emailContato : "",
-        celDDD : "",
-        celNro : "", 
-        telDDD : "",
-        telNro : "",
+        celDDD : "00",
+        celNro : "00", 
+        telDDD : "00",
+        telNro : "00",
         endLogradouro : "",
         endNumero : "",
         endComplemento : "",
@@ -571,8 +571,8 @@ export default class CadastroAlunos extends Component{
         dtMatricula : "",
         nis : "",
         transportador : "",
-        telDDDTransportador : "",
-        telNroTransportador : "", 
+        telDDDTransportador : "00",
+        telNroTransportador : "00", 
         unidadeEscolar : "",
         ubsRef : ""    
       }  
@@ -603,6 +603,7 @@ export default class CadastroAlunos extends Component{
             </Col>
           </Row>
 
+        
           <Row className="mb-3">
             <Col xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
               <Form>
@@ -641,8 +642,15 @@ export default class CadastroAlunos extends Component{
                 </Form.Group>  
                   <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.dtNascimento">
                     <Form.Label>Data de nascimento</Form.Label>
-                    <Form.Control type="text" placeholder={"Data de nascimento"} disabled={!this.state.isEdicao}  
+                    <Form.Control type="text" placeholder={"DD/MM/AAAA"} disabled={!this.state.isEdicao}  
                     onChange={this.handleChange} value={this.state.dtNascimento} name="dtNascimento" required autoComplete="false" maxLength="10"
+                    />  
+                  </Form.Group>
+
+                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.email">
+                    <Form.Label>E-mail</Form.Label>
+                    <Form.Control type="email" placeholder={"email para contato"} disabled={!this.state.isEdicao}  
+                    onChange={this.handleChange} value={this.state.emailContato} name="emailContato" required autoComplete="false" maxLength="100"
                     />  
                   </Form.Group>
                 </Row>
@@ -696,7 +704,7 @@ export default class CadastroAlunos extends Component{
                   <Form.Group className="ps-2" controlId="alunoForm.nomePai">
                     <Form.Label>Nome</Form.Label>
                       <Form.Control type="text" placeholder={"Nome completo do pai do Aluno"} disabled={!this.state.isEdicao}  
-                      onChange={this.handleChange} value={this.state.nomePai} name="nomePai" required autoComplete="false" maxLength="100"
+                      onChange={this.handleChange} value={this.state.nomePai} name="nomePai" autoComplete="false" maxLength="100"
                       />   
                     </Form.Group>       
                     </Col>
@@ -704,20 +712,20 @@ export default class CadastroAlunos extends Component{
                     <Col xs={3}>
                       <Form.Label>CPF</Form.Label>
                       <Form.Control type="text" placeholder={"Apenas números"} disabled={!this.state.isEdicao}  
-                      onChange={this.handleChangeNumerico} value={this.state.cpfPai} name="cpfPai" required autoComplete="false" maxLength="11"
+                      onChange={this.handleChangeNumerico} value={this.state.cpfPai} name="cpfPai" autoComplete="false" maxLength="11"
                       />
                     </Col>
                     <Col xs={1}>
                       <Form.Label>DDD</Form.Label>
                       <Form.Control type="text" placeholder={"011"} disabled={!this.state.isEdicao}  
-                      onChange={this.handleChangeNumerico} value={this.state.telDDDPai} name="telDDDPai" required autoComplete="false" maxLength="3" 
+                      onChange={this.handleChangeNumerico} value={this.state.telDDDPai} name="telDDDPai" autoComplete="false" maxLength="3" 
                       />
                     </Col>
                     <Col xs={3}>
                     <Form.Group className="pe-2" controlId="alunoForm.telNroPai">
                       <Form.Label>Número de contato</Form.Label>
                       <Form.Control type="text" placeholder={"Apenas números"} disabled={!this.state.isEdicao}  
-                      onChange={this.handleChangeNumerico} value={this.state.telNroPai} name="telNroPai" required autoComplete="false" maxLength="9" 
+                      onChange={this.handleChangeNumerico} value={this.state.telNroPai} name="telNroPai" autoComplete="false" maxLength="9" 
                       />
                     </Form.Group>   
                     </Col>
@@ -763,7 +771,7 @@ export default class CadastroAlunos extends Component{
                   </Form.Group>
                   <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.dtMatricula">
                     <Form.Label>Data da Matricula</Form.Label>
-                    <Form.Control type="text" placeholder={"Data da matricula"} disabled={!this.state.isEdicao}  
+                    <Form.Control type="text" placeholder={"DD/MM/AAAA"} disabled={!this.state.isEdicao}  
                     onChange={this.handleChange} value={this.state.dtMatricula} name="dtMatricula" required autoComplete="false" maxLength="10"
                     />                  
                   </Form.Group>
@@ -791,14 +799,14 @@ export default class CadastroAlunos extends Component{
                     <Col>                
                     <Form.Label>DDD Telefone fixo</Form.Label>
                     <Form.Control type="text" placeholder={"011"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChangeNumerico} value={this.state.telDDD} name="telDDD" required autoComplete="false" maxLength="3" 
+                    onChange={this.handleChangeNumerico} value={this.state.telDDD} name="telDDD" autoComplete="false" maxLength="3" 
                     />
                     </Col>
 
                     <Col xs={8}>                 
                     <Form.Label>Telefone fixo</Form.Label>
                     <Form.Control type="text" placeholder={"99999999. Somente números"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChangeNumerico} value={this.state.telNro} name="telNro" required autoComplete="false" maxLength="9" 
+                    onChange={this.handleChangeNumerico} value={this.state.telNro} name="telNro" autoComplete="false" maxLength="9" 
                     />
                     </Col>  
                   </Row>
@@ -822,7 +830,7 @@ export default class CadastroAlunos extends Component{
                     <Col>  
                     <Form.Label>Complemento</Form.Label>
                     <Form.Control type="text" placeholder={"Casa 1 / ap10 / cj10"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.endComplemento} name="endComplemento" required autoComplete="false"  maxLength="50"
+                    onChange={this.handleChange} value={this.state.endComplemento} name="endComplemento" autoComplete="false"  maxLength="50"
                     />
                     </Col>                      
                     <Col>  
@@ -873,15 +881,24 @@ export default class CadastroAlunos extends Component{
                         </FloatingLabel>                    
                       </div>
                     }      
-                    </Col>                        
-                  </Row>     
+                  </Col>                        
+                </Row>     
+                  
+                <Row className="mb-3">
+                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.ubsref">
+                    <Form.Label>UBS de referência</Form.Label>
+                    <Form.Control type="text" placeholder={"UBS de referência"} disabled={!this.state.isEdicao}  
+                    onChange={this.handleChange} value={this.state.ubsRef} name="ubsRef" required autoComplete="false"  maxLength="200"
+                    />
+                  </Form.Group>
 
-                <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.ubsref">
-                  <Form.Label>UBS de referência</Form.Label>
-                  <Form.Control type="text" placeholder={"UBS de referência"} disabled={!this.state.isEdicao}  
-                  onChange={this.handleChange} value={this.state.ubsRef} name="ubsRef" required autoComplete="false"  maxLength="200"
-                  />
-                </Form.Group>
+                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.unidadeEscolar ">
+                    <Form.Label>Unidade Escolar</Form.Label>
+                    <Form.Control type="text" placeholder={"UBS de referência"} disabled={!this.state.isEdicao}  
+                    onChange={this.handleChange} value={this.state.unidadeEscolar} name="unidadeEscolar" required autoComplete="false"  maxLength="200"
+                    />
+                  </Form.Group>
+                </Row>
 
                 <Card className="mb-3">
                 <Card.Header>Dados do Transportador</Card.Header>
@@ -905,7 +922,7 @@ export default class CadastroAlunos extends Component{
                   <Form.Group className="pe-2" controlId="alunoForm.transportadorTelNro">
                     <Form.Label>Telefone</Form.Label>
                     <Form.Control type="text" placeholder={"Apenas números"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChangeNumerico} value={this.state.telNroTransportador} name="telNroTransportador" autoComplete="false" maxLength="11"
+                    onChange={this.handleChangeNumerico} value={this.state.telNroTransportador} name="telNroTransportador" autoComplete="false" maxLength="9"
                     />
                   </Form.Group></Col>
                 </Row>
