@@ -190,6 +190,9 @@ export default class HttpService{
     if (filtros.nomePai) {
       queryParams.push('nomePai=' + filtros.nomePai);
     }
+    if (filtros.nis) {
+      queryParams.push('nis=' + filtros.nis);
+    }
     if (filtros.paginacaoRequest) {
       queryParams.push(HttpService.queryPaginacao(filtros.paginacaoRequest));
     }
