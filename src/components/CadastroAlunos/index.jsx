@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Container, Table, Form, Row, Col, InputGroup, FormControl, ButtonGroup, ToggleButton } from 'react-bootstrap';
+import { Container, Table, Form, Row, Col, InputGroup, FormControl, ButtonGroup, ToggleButton, Card } from 'react-bootstrap';
 import './index.css';
 import queryString from 'query-string';
 import HttpService from '../../services/HttpService';
@@ -27,7 +27,13 @@ export default class CadastroAlunos extends Component{
       dtNascimento : null,
       sexo : null,
       nomeMae : null,
+      cpfMae : null,
+      telDDDMae : null,
+      telNroMae : null,
       nomePai : null,
+      cpfPai : null,
+      telDDDPai : null,
+      telNroPai : null,
       emailContato : null,
       celDDD : null,
       celNro : null, 
@@ -42,7 +48,10 @@ export default class CadastroAlunos extends Component{
       endUF : null,
       nroMatricula : null,
       dtMatricula : null,
-      ra : null,
+      nis : null,
+      transportador : null,
+      unidadeEscolar : null,
+      UBSRef : null,
       alunos : [],    
       textoBusca : null, 
       paramBusca : null, 
@@ -244,8 +253,17 @@ export default class CadastroAlunos extends Component{
           rg : data.rg,
           dtNascimento : data.dtNascimento,
           sexo : data.sexo,
-          nomeMae : data.nomeMae,
-          nomePai : data.nomePai,
+          
+          nomeMae : data.mae.nome,
+          cpfMae : data.mae.cpf,
+          telDDDMae : data.mae.telContato.telDDD,
+          telNroMae : data.mae.telContato.telNro,
+
+          nomePai : data.pai.nome,
+          cpfPai : data.pai.cpf,
+          telDDDPai : data.pai.telContato.telDDD,
+          telNroPai : data.pai.telContato.telNro,
+
           emailContato : data.emailContato,
           celDDD : data.telCelular.celDDD,
           celNro : data.telCelular.celNro,
@@ -260,7 +278,10 @@ export default class CadastroAlunos extends Component{
           endUF : data.endResidencial.endUF,
           nroMatricula : data.nroMatricula,
           dtMatricula : data.dtMatricula,
-          ra : data.ra,
+          nis : data.nis,
+          transportador : data.transportador,
+          unidadeEscolar : data.unidadeEscolar,
+          UBSRef : data.UBSRef,
 
           isEdicao: true
         }));
@@ -521,44 +542,114 @@ export default class CadastroAlunos extends Component{
                   </Form.Group>
                 </Row>
 
-                <Row className="mb-3">
-                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.nomeMae">
-                    <Form.Label>Nome da mãe</Form.Label>
-                    <Form.Control type="text" placeholder={"Nome completo da mãe do aluno"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.nomeMae} name="nomeMae" required autoComplete="false"
-                    />
-                  </Form.Group>
+                <div>
+                <Card className="mb-3">
+                  <Card.Header>Dados da Mãe</Card.Header>
+                  <Row className="mb-3">
+      
+                    <Col xs={5}>
+                    <Form.Group className="ps-2" controlId="alunoForm.nomeMae">
+                      <Form.Label>Nome da mãe</Form.Label>
+                      <Form.Control type="text" placeholder={"Nome completo da mãe do Aluno"} disabled={!this.state.isEdicao}  
+                      onChange={this.handleChange} value={this.state.nomeMae} name="nomeMae" required autoComplete="false"
+                      />
+                    </Form.Group>
+                    </Col>
 
-                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.nomePai">
-                   <Form.Label>Nome do pai</Form.Label>
-                    <Form.Control type="text" placeholder={"Nome completo do pai do aluno"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.nomePai} name="nomePai" required autoComplete="false"
-                    />        
-                  </Form.Group>
-                </Row>
+                    <Col xs={3}>
+                      <Form.Label>CPF</Form.Label>
+                      <Form.Control type="text" placeholder={"Apenas números"} disabled={!this.state.isEdicao}  
+                      onChange={this.handleChange} value={this.state.cpfMae} name="cpfMae" required autoComplete="false"
+                      />
+                    </Col>
 
+
+                    <Col xs={1}>
+                      <Form.Label>DDD</Form.Label>
+                      <Form.Control type="number" placeholder={"011"} disabled={!this.state.isEdicao}  
+                      onChange={this.handleChange} value={this.state.telDDDMae} name="telDDDMae" required autoComplete="false"
+                      />
+                    </Col>
+
+                    <Col xs={3}>
+                    <Form.Group className="pe-2" controlId="alunoForm.telNroMae">
+                      <Form.Label>Número de contato</Form.Label>
+                      <Form.Control type="number" placeholder={"Apenas números"} disabled={!this.state.isEdicao}  
+                      onChange={this.handleChange} value={this.state.telNroMae} name="telNroMae" required autoComplete="false"
+                      />
+                    </Form.Group>
+                    </Col>
+                  </Row>  
+                </Card>
+                </div>                
+
+                <div>
+                <Card className="mb-3">
+                  <Card.Header>Dados do Pai</Card.Header>
+                  <Row className="mb-3">
+                  <Col xs={5}>
+                  <Form.Group className="ps-2" controlId="alunoForm.nomePai">
+                    <Form.Label>Nome</Form.Label>
+                      <Form.Control type="text" placeholder={"Nome completo do pai do Aluno"} disabled={!this.state.isEdicao}  
+                      onChange={this.handleChange} value={this.state.nomePai} name="nomePai" required autoComplete="false"
+                      />   
+                    </Form.Group>       
+                    </Col>
+
+                    <Col xs={3}>
+                      <Form.Label>CPF</Form.Label>
+                      <Form.Control type="text" placeholder={"Apenas números"} disabled={!this.state.isEdicao}  
+                      onChange={this.handleChange} value={this.state.cpfPai} name="cpfPai" required autoComplete="false"
+                      />
+                    </Col>
+                    <Col xs={1}>
+                      <Form.Label>DDD</Form.Label>
+                      <Form.Control type="number" placeholder={"011"} disabled={!this.state.isEdicao}  
+                      onChange={this.handleChange} value={this.state.telDDDPai} name="telDDDPai" required autoComplete="false"
+                      />
+                    </Col>
+                    <Col xs={3}>
+                    <Form.Group className="pe-2" controlId="alunoForm.telNroPai">
+                      <Form.Label>Número de contato</Form.Label>
+                      <Form.Control type="number" placeholder={"Apenas números"} disabled={!this.state.isEdicao}  
+                      onChange={this.handleChange} value={this.state.telNroPai} name="telNroPai" required autoComplete="false"
+                      />
+                    </Form.Group>   
+                    </Col>
+
+                  </Row>
+                </Card>  
+                </div>
+
+                <Card className="mb-3">
+                <Card.Header>Documentos do Aluno</Card.Header>
                 <Row className="mb-3">
-                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.rg">
+                  <Col>
+                  <Form.Group className="ps-2" controlId="alunoForm.rg">
                     <Form.Label>RG</Form.Label>
                     <Form.Control type="number" placeholder={"Digite o RG sem pontuação. Somente números"} disabled={!this.state.isEdicao}  
                     onChange={this.handleChange} value={this.state.rg} name="rg" required autoComplete="false"
                     />
-                  </Form.Group>
-                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.cpf">
+                  </Form.Group></Col>
+                  <Col>
+                  <Form.Group controlId="alunoForm.cpf">
                     <Form.Label>CPF</Form.Label>
                     <Form.Control type="number" placeholder={"Digite o CPF sem pontuação. Somente números"} disabled={!this.state.isEdicao}  
                     onChange={this.handleChange} value={this.state.cpf} name="cpf" required autoComplete="false"
                     />
-                  </Form.Group>
+                  </Form.Group></Col>
+                  
+                  <Col>
+                  <Form.Group className="pe-2" controlId="alunoForm.nis">
+                    <Form.Label>NIS</Form.Label>
+                    <Form.Control type="text" placeholder={"NIS. Sem pontaução"} disabled={!this.state.isEdicao}  
+                    onChange={this.handleChange} value={this.state.nis} name="nis" required autoComplete="false"
+                    />
+                  </Form.Group></Col>
                 </Row>
+                </Card>
 
                 <Row className="mb-3">
-                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.ra">
-                    <Form.Label>RA</Form.Label>
-                    <Form.Control type="text" placeholder={"RA"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.ra} name="ra" required autoComplete="false"
-                    />
-                  </Form.Group>
                   <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.nroMatricula">
                     <Form.Label>Número de Matricula</Form.Label>
                     <Form.Control type="text" placeholder={"Identificação da matricula"} disabled={!this.state.isEdicao}  
@@ -638,46 +729,46 @@ export default class CadastroAlunos extends Component{
                   </Row>
 
                   <Row>
-                  <Col>                      
-                  <Form.Label>Bairro</Form.Label>
-                  <Form.Control type="text" placeholder={"Insira o Bairro"} disabled={!this.state.isEdicao}  
-                  onChange={this.handleChange} value={this.state.endBairro} name="endBairro" required autoComplete="false"
-                  />
-                  </Col>                    
-                  <Col>  
-                  <Form.Label>Cidade</Form.Label>
-                  <Form.Control type="text" placeholder={"São Paulo"} disabled={!this.state.isEdicao}  
-                  onChange={this.handleChange} value={this.state.endCidade} name="endCidade" required autoComplete="false"
-                  />    
-                  </Col>  
-                  <Col>                    
-                  {
-                    (!this.state.isEdicao) &&
-                    <div>
-                      <Form.Group as={Col} controlId="alunoForm.UF">
-                          <Form.Label>UF</Form.Label>
-                          <Form.Control type="text" placeholder={this.state.endUF} disabled value={this.state.endUF}/>
-                      </Form.Group>
-                    </div>
-                  }
-                  {
-                    (this.state.isEdicao) &&
-                    <div>
-                      <br/>
-                      <FloatingLabel className="inputNovoAluno" controlId="floatingSelectGrid" label="UF">
-                        <Form.Select aria-label="Floating label" onChange={this.handleChange}  value={this.state.endUF}>
-                        <option value="AC">Acre</option> <option value="AL">Alagoas</option> <option value="AP">Amapá</option> <option value="AM">Amazonas</option> <option value="BA">Bahia</option> 
-                        <option value="CE">Ceará</option> <option value="DF">Distrito Federal</option> <option value="ES">Espírito Santo</option> <option value="GO">Goiás</option> 
-                        <option value="MA">Maranhão</option> <option value="MT">Mato Grosso</option> <option value="MS">Mato Grosso do Sul</option> <option value="MG">Minas Gerais</option> 
-                        <option value="PA">Pará</option> <option value="PB">Paraíba</option> <option value="PR">Paraná</option> <option value="PE">Pernambuco</option> <option value="PI">Piauí</option> 
-                        <option value="RJ">Rio de Janeiro</option> <option value="RN">Rio Grande do Norte</option> <option value="RS">Rio Grande do Sul</option> <option value="RO">Rondônia</option> 
-                        <option value="RR">Roraima</option> <option value="SC">Santa Catarina</option> <option value="SP">São Paulo</option> <option value="SE">Sergipe</option> 
-                        <option value="TO">Tocantins</option>
-                        </Form.Select>
-                      </FloatingLabel>                    
-                    </div>
-                  }      
-                  </Col>                        
+                    <Col>                      
+                    <Form.Label>Bairro</Form.Label>
+                    <Form.Control type="text" placeholder={"Insira o Bairro"} disabled={!this.state.isEdicao}  
+                    onChange={this.handleChange} value={this.state.endBairro} name="endBairro" required autoComplete="false"
+                    />
+                    </Col>                    
+                    <Col>  
+                    <Form.Label>Cidade</Form.Label>
+                    <Form.Control type="text" placeholder={"São Paulo"} disabled={!this.state.isEdicao}  
+                    onChange={this.handleChange} value={this.state.endCidade} name="endCidade" required autoComplete="false"
+                    />    
+                    </Col>  
+                    <Col>                    
+                    {
+                      (!this.state.isEdicao) &&
+                      <div>
+                        <Form.Group as={Col} controlId="alunoForm.UF">
+                            <Form.Label>UF</Form.Label>
+                            <Form.Control type="text" placeholder={this.state.endUF} disabled value={this.state.endUF}/>
+                        </Form.Group>
+                      </div>
+                    }
+                    {
+                      (this.state.isEdicao) &&
+                      <div>
+                        <br/>
+                        <FloatingLabel className="inputNovoAluno" controlId="floatingSelectGrid" label="UF">
+                          <Form.Select aria-label="Floating label" onChange={this.handleChange}  value={this.state.endUF}>
+                          <option value="AC">Acre</option> <option value="AL">Alagoas</option> <option value="AP">Amapá</option> <option value="AM">Amazonas</option> <option value="BA">Bahia</option> 
+                          <option value="CE">Ceará</option> <option value="DF">Distrito Federal</option> <option value="ES">Espírito Santo</option> <option value="GO">Goiás</option> 
+                          <option value="MA">Maranhão</option> <option value="MT">Mato Grosso</option> <option value="MS">Mato Grosso do Sul</option> <option value="MG">Minas Gerais</option> 
+                          <option value="PA">Pará</option> <option value="PB">Paraíba</option> <option value="PR">Paraná</option> <option value="PE">Pernambuco</option> <option value="PI">Piauí</option> 
+                          <option value="RJ">Rio de Janeiro</option> <option value="RN">Rio Grande do Norte</option> <option value="RS">Rio Grande do Sul</option> <option value="RO">Rondônia</option> 
+                          <option value="RR">Roraima</option> <option value="SC">Santa Catarina</option> <option value="SP">São Paulo</option> <option value="SE">Sergipe</option> 
+                          <option value="TO">Tocantins</option>
+                          </Form.Select>
+                        </FloatingLabel>                    
+                      </div>
+                    }      
+                    </Col>                        
                   </Row>     
 
                 </Form.Group>
@@ -743,7 +834,7 @@ export default class CadastroAlunos extends Component{
                       <th>#</th>
                       <th>Nome</th>
                       <th>Número de Matricula</th>
-                      <th>Número do RA</th>
+                      <th>Número do NIS</th>
                       <th>Faltas</th>
                   </tr>
                 </thead>
@@ -757,7 +848,7 @@ export default class CadastroAlunos extends Component{
                         <td>{aluno.idAluno}</td>
                         <td>{aluno.nome}</td>
                         <td>{aluno.nroMatricula}</td>
-                        <td>{aluno.ra}</td>
+                        <td>{aluno.nis}</td>
                         <td style={{textAlign : "center"}}>
                             {/* <Button onClick={() => {this.visualizarAula(aula.idAula)}}>Visualizar Aula</Button> */}
                             <Button onClick={() => {this.exibirAluno(aluno.idAluno)}}>Selecionar Aluno</Button>
