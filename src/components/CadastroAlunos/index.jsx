@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { Container, Table, Form, Row, Col, InputGroup, FormControl, ButtonGroup, ToggleButton, Card } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import './index.css';
 import queryString from 'query-string';
 import HttpService from '../../services/HttpService';
@@ -945,7 +946,20 @@ export default class CadastroAlunos extends Component{
               <Button variant="success" className="btnSalvarAluno" onClick={this.salvarAluno} disabled={!this.state.isEdicao}>Salvar</Button>
               <Button variant="secondary" className="btnCancelar" onClick={() => {window.location = './cadastro-alunos'}} disabled={!this.state.isEdicao}>Cancelar</Button>
               <Button variant="danger" className="btnDeletarAluno" onClick={this.deletarAluno} disabled={this.state.idAluno == 0}>Deletar</Button>            
-              <Button className="btnAddTurma" onClick={this.abrirTurmas} disabled={!this.state.isEdicao}>Adicionar à turma</Button>    
+
+              <OverlayTrigger
+                key="right"
+                placement="right"
+                overlay={
+                  <Tooltip id="tooltip-disabled">
+                  {(this.state.isEdicao && this.state.idAluno === 0 ) && <strong>Você primeiro deve salvar o novo aluno, para depois adicionia-lo em uma turma.</strong>}
+                  {(!(this.state.isEdicao && this.state.idAluno === 0) ) && <strong>Adiciona este aluno a uma das turmas existentes.</strong>}
+                  </Tooltip>}
+                  >  
+                <span className="d-inline-block">
+                  <Button className="btnAddTurma" onClick={this.abrirTurmas} disabled={!this.state.isEdicao || this.state.idAluno === 0 }>Adicionar à turma</Button>    
+                </span>
+                </OverlayTrigger>
             </Col>
           </Row>
 

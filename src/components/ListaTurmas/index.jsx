@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { Container, Table } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import HttpService from "../../services/HttpService";
 import HttpServiceHandler from "../../services/HttpServiceHandler";
 import MenuLogado from "../MenuLogado";
@@ -40,6 +41,11 @@ export default class ListaTurmas extends Component {
         mensagemErro : '',
         show : false,
         titulo : ''
+      },
+      sucessoModal : {
+        mensagem : '',
+        show : false,
+        redirect : ''
       }
     };
 
@@ -112,6 +118,20 @@ export default class ListaTurmas extends Component {
         }
       });
     }
+
+    this.closeSucessoModal = () => {
+      if (this.state.sucessoModal.redirect) {
+        window.location = this.state.sucessoModal.redirect;
+      }
+
+      this.setState({
+        sucessoModal : {
+          mensagem : '',
+          show : false
+        }
+      });
+    }
+
 
     this.adicionarAluno = (idTurma) => {
       HttpService.addAlunoTurma (
@@ -210,6 +230,18 @@ export default class ListaTurmas extends Component {
             </Table>
 
             <Paginacao there={this}/>
+
+            <Modal show={this.state.sucessoModal.show} onHide={this.closeSucessoModal}>
+              <Modal.Header closeButton>
+                <Modal.Title>Sucesso</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>{this.state.sucessoModal.mensagem}</Modal.Body>
+              <Modal.Footer>
+                  <Button variant="secondary" onClick={this.closeSucessoModal}>
+                  Ok
+                  </Button>
+              </Modal.Footer>
+              </Modal>
 
             <ErroModal closeErroModal={this.closeErroModal} erroModal={this.state.erroModal}/>
 
