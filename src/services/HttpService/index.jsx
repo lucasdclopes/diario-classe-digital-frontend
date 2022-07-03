@@ -156,6 +156,14 @@ export default class HttpService{
     return response;
   }
 
+
+  static deletarAlunoTurma = async (idTurma, idAluno) => {
+    console.log("vou deletar o aluno" + idAluno + " da turma "+idTurma);
+    let url = urlBase + '/turmas/' +idTurma + "/aluno/" + idAluno;
+    let response = await axios.delete(url,defaultConfig);
+    return response;
+  }
+
   static salvarTurma =  (postData) => {
     let url = urlBase + '/turmas';
     let config = defaultConfig;

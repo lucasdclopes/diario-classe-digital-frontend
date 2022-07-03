@@ -46,7 +46,14 @@ export default class Turma extends Component{
         show : false,
         titulo : '',
         callBackSim : null
-      },      
+      },    
+      confirmacaoModalRemoverAluno : {
+        perguntaConfirmacao : '',
+        show : false,
+        titulo : '',
+        callBackSim : null,
+        idAluno : null
+      },       
     };
 
     this.closeErroModal = () => {
@@ -82,6 +89,17 @@ export default class Turma extends Component{
       });
     }
 
+    this.abrirConfirmacaoModalRemoverAluno = (idAluno) => {
+      this.setState({
+        confirmacaoModalRemoverAluno : {
+          perguntaConfirmacao : 'Deseja realmente remover este aluno desta turma?',
+          show : true,
+          titulo : 'Remover Aluno',
+          idAluno : idAluno
+        }
+      });
+    }
+
     this.handleSimConfirmacaoModal = () => {
       HttpService.deletarTurma(this.state.idTurma)
       .then((response) => {
@@ -103,6 +121,27 @@ export default class Turma extends Component{
       });
     }
 
+
+    this.handleSimConfirmacaoModalRemoverAluno = () => {
+      HttpService.deletarAlunoTurma(this.state.idTurma, this.state.confirmacaoModalRemoverAluno.idAluno)
+      .then((response) => {
+        if (response) {
+          this.setState({
+            sucessoModal : {
+              mensagem : 'Aluno removido com sucesso.',
+              show : true
+            }
+          });
+        }
+      })
+      .catch((error) => {
+        new HttpServiceHandler().validarExceptionHTTP(error.response, this);
+      })
+      .finally(() => {
+        this.closeConfirmacaoModalRemoverAluno();
+      });
+    }
+
     this.closeConfirmacaoModal = () => {
       this.setState({
         confirmacaoModal : {
@@ -111,6 +150,19 @@ export default class Turma extends Component{
           titulo : '',
           callBackSim : null
         }
+      });
+    }
+
+    this.closeConfirmacaoModalRemoverAluno = () => {
+      this.setState({
+        confirmacaoModalRemoverAluno : {
+          perguntaConfirmacao : '',
+          show : false,
+          titulo : '',
+          callBackSim : null
+        }
+      }, () => {
+        this.exibirTurma(this.state.idTurma);
       });
     }
 
@@ -215,6 +267,10 @@ export default class Turma extends Component{
     }
     this.deletarTurma = (e) => {
       this.abrirConfirmacaoModal();
+    }
+
+    this.removerAlunoDaTurma = (idAluno) => {
+      this.abrirConfirmacaoModalRemoverAluno(idAluno);
     }
 
     this.handleTpPeriodo = (e) => {
@@ -333,6 +389,7 @@ export default class Turma extends Component{
                       <th>Número de Matricula</th>
                       <th>Número do RA</th>
                       <th>Faltas</th>
+                      <th>Remover</th>
                   </tr>
                 </thead>
 
@@ -349,6 +406,10 @@ export default class Turma extends Component{
                         <td style={{textAlign : "center"}}>
                             {/* <Button onClick={() => {this.visualizarAula(aula.idAula)}}>Visualizar Aula</Button> */}
                             <Button onClick={() => {this.abrirFaltasAlunoModal(aluno.idAluno)}}>Calcular faltas</Button>
+                        </td>
+                        <td style={{textAlign : "center"}}>
+                            {/* <Button onClick={() => {this.visualizarAula(aula.idAula)}}>Visualizar Aula</Button> */}
+                            <Button variant="danger" className="btnDeletarTurma" onClick={() => {this.removerAlunoDaTurma(aluno.idAluno)}}>Remover da turma</Button>
                         </td>
                         </tr>
                     )
@@ -400,6 +461,7 @@ export default class Turma extends Component{
             
             <ErroModal closeErroModal={this.closeErroModal} erroModal={this.state.erroModal}/>
             <ConfirmacaoModal closeConfirmacaoModal={this.closeConfirmacaoModal} handleSimConfirmacaoModal={this.handleSimConfirmacaoModal} confirmacaoModal={this.state.confirmacaoModal}></ConfirmacaoModal>
+            <ConfirmacaoModal closeConfirmacaoModal={this.closeConfirmacaoModalRemoverAluno} handleSimConfirmacaoModal={this.handleSimConfirmacaoModalRemoverAluno} confirmacaoModal={this.state.confirmacaoModalRemoverAluno}></ConfirmacaoModal>
           </Container>
       </div>
     )
