@@ -1013,7 +1013,7 @@ export default class CadastroAlunos extends Component{
                       <th>Nome da mãe</th>
                       <th>Número de Matricula</th>
                       <th>Número do NIS</th>
-                      <th>Faltas</th>
+                      <th>Editar</th>
                   </tr>
                 </thead>
 
@@ -1030,7 +1030,7 @@ export default class CadastroAlunos extends Component{
                         <td>{aluno.NIS}</td>
                         <td style={{textAlign : "center"}}>
                             {/* <Button onClick={() => {this.visualizarAula(aula.idAula)}}>Visualizar Aula</Button> */}
-                            <Button onClick={() => {this.exibirAluno(aluno.idAluno)}}>Selecionar Aluno</Button>
+                            <Button onClick={() => {this.exibirAluno(aluno.idAluno)}}>Editar Aluno</Button>
                         </td>
                         </tr>
                     )
