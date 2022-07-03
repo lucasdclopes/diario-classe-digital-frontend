@@ -164,6 +164,13 @@ export default class HttpService{
     return response;
   }
 
+  static addAlunoTurma = async (idTurma, idAluno) => {
+    console.log("vou add o aluno" + idAluno + " na turma "+idTurma);
+    let url = urlBase + '/turmas/' +idTurma + "/aluno/" + idAluno;
+    let response = await axios.put(url,null,defaultConfig);
+    return response;
+  }
+
   static salvarTurma =  (postData) => {
     let url = urlBase + '/turmas';
     let config = defaultConfig;

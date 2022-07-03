@@ -12,6 +12,7 @@ import DateHelper from '../../helpers/DateHelper';
 import ConfirmacaoModal from "../ConfirmacaoModal";
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Paginacao from '../Paginacao';
+import { toHaveDisplayValue } from "@testing-library/jest-dom/dist/matchers";
 
 
 export default class CadastroAlunos extends Component{
@@ -379,6 +380,10 @@ export default class CadastroAlunos extends Component{
     }
     this.deletarAluno = (e) => {
       this.abrirConfirmacaoModal();
+    }
+
+    this.abrirTurmas = () => {
+      window.location = './lista-turmas?idAluno=' + this.state.idAluno;
     }
 
     this.buscarAluno = (e) => {
@@ -940,6 +945,7 @@ export default class CadastroAlunos extends Component{
               <Button variant="success" className="btnSalvarAluno" onClick={this.salvarAluno} disabled={!this.state.isEdicao}>Salvar</Button>
               <Button variant="secondary" className="btnCancelar" onClick={() => {window.location = './cadastro-alunos'}} disabled={!this.state.isEdicao}>Cancelar</Button>
               <Button variant="danger" className="btnDeletarAluno" onClick={this.deletarAluno} disabled={this.state.idAluno == 0}>Deletar</Button>            
+              <Button className="btnAddTurma" onClick={this.abrirTurmas} disabled={!this.state.isEdicao}>Adicionar à turma</Button>    
             </Col>
           </Row>
 

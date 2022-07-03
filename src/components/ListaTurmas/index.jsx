@@ -9,6 +9,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import ErroModal from "../ErroModal";
+import queryString from 'query-string';
 
 import './index.css';
 import Paginacao from "../Paginacao";
@@ -24,6 +25,8 @@ export default class ListaTurmas extends Component {
         descTurma : null,
         tpPeriodo : null,
         tpNivelEnsino: null,
+        isModoAddAluno: false, //se for true entrou pela tela de cadastro de alunos. Neste caso vai adicionar o aluno a uma turma. Gambiarra pra reaproveitar essa tela, paciencia.
+        idAlunoAddTurma: null,
         paginacaoRequest : {
           size: 15,
           page: 1
@@ -110,6 +113,37 @@ export default class ListaTurmas extends Component {
       });
     }
 
+    this.adicionarAluno = (idTurma) => {
+      HttpService.addAlunoTurma (
+        idTurma,
+        this.state.idAlunoAddTurma
+        )
+      .then((response) => {
+        if (response) {
+          this.setState({
+            sucessoModal : {
+              mensagem : 'Aluno adicionado com sucesso.',
+              show : true,
+              redirect : './cadastro-alunos'
+            }
+          });
+        }
+      })
+      .catch((error) => {
+        new HttpServiceHandler().validarExceptionHTTP(error.response, this);
+      });
+    }
+
+    this.closeErroModal = () => {
+      this.setState({
+        erroModal : {
+          mensagemErro : '',
+          showModalErro : false,
+          titulo : ''
+        }
+      });
+    }
+
   }
 
   render(){
@@ -160,8 +194,12 @@ export default class ListaTurmas extends Component {
                         <td>{turma.tpNivelEnsino}</td>
                         <td>{turma.tpPeriodo}</td>
                         <td style={{textAlign : "center"}}>
-                          {/* <Button onClick={() => {this.visualizarAula(aula.idAula)}}>Visualizar Aula</Button> */}
+                       {(!this.state.isModoAddAluno) &&
                           <Button onClick={() => {this.abrirDetalhesTurma(turma.idTurma)}}>Detalhes Turma</Button>
+                       }
+                       {(this.state.isModoAddAluno) &&
+                          <Button variant="success" onClick={() => {this.adicionarAluno(turma.idTurma)}}>Adicionar nesta turma</Button>
+                       }
                         </td>
                       </tr>
                     )
@@ -181,6 +219,16 @@ export default class ListaTurmas extends Component {
   }
 
   componentDidMount() {
+
+    const parsed = queryString.parse(window.location.search);
+
     this.obterLista();
+
+    if (parsed.idAluno !== null && typeof parsed.idAluno != "undefined") {
+      this.setState({
+        isModoAddAluno : true,
+        idAlunoAddTurma : parsed.idAluno
+      });
+    }
   }
 }
