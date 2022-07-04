@@ -1,13 +1,13 @@
-.containerCadastroAlunos {
+.containerCadastroBeneficios {
   padding-top: 60px;
 }
 
-.btnSalvarAluno {
+.btnSalvarBeneficio {
   background-color:rgb(2, 114, 11);
   margin-left: 20px;
 }
 
-.btnDeletarAluno {
+.btnDeletarBeneficio {
   margin-left: 20px;
 }
 
@@ -19,7 +19,7 @@
   margin-left: 20px;
 }
 
-.inputNovoAluno {
+.inputBeneficio {
   margin-bottom: 20px;
 }
 

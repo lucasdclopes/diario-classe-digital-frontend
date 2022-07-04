@@ -236,9 +236,58 @@ export default class HttpService{
     }
   }
 
-
   static exibirAluno = async (idAluno) => {
     let url = urlBase + '/alunos/' +idAluno;
+    let response = await axios.get(url,defaultConfig);
+    return response;
+  }
+
+  static listarBeneficios = async (filtros) => {
+    let url = urlBase + '/beneficios';
+    let queryParams = [];
+
+    if (filtros.cpf) {
+      queryParams.push('idAluno=' + filtros.idAluno);
+    }
+    if (filtros.nome) {
+      queryParams.push('dtRecebimentoInicio=' + filtros.dtRecebimentoInicio);
+    }
+    if (filtros.nomeMae) {
+      queryParams.push('dtRecebimentoFim=' + filtros.dtRecebimentoFim);
+    }
+    if (filtros.nomePai) {
+      queryParams.push('responsavelRecebimento=' + filtros.responsavelRecebimento);
+    }
+    if (filtros.paginacaoRequest) {
+      queryParams.push(HttpService.queryPaginacao(filtros.paginacaoRequest));
+    }
+
+    url += HttpService.gerarParams(queryParams);
+
+    let response = await axios.get(url,defaultConfig);
+    return response;
+  }
+
+  static deletarBeneficio = async (idBeneficio) => {
+    console.log("vou deletar o benefício "+idBeneficio);
+    let url = urlBase + '/beneficios/' +idBeneficio;
+    let response = await axios.delete(url,defaultConfig);
+    return response;
+  }
+
+  static salvarBeneficio = (postData,idBeneficio) => {
+    let url = urlBase + '/beneficios/'+ ((idBeneficio && idBeneficio != 0) ? idBeneficio : "");
+    let config = defaultConfig;
+    if (idBeneficio != 0) {
+      return axios.put(url,postData,config);
+    }
+    else {
+      return axios.post(url,postData,config);
+    }
+  }
+
+  static exibirBeneficio = async (idBeneficio) => {
+    let url = urlBase + '/beneficios/' +idBeneficio;
     let response = await axios.get(url,defaultConfig);
     return response;
   }

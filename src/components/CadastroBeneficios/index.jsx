@@ -12,6 +12,7 @@ import { Modal } from 'react-bootstrap';
 import ConfirmacaoModal from "../ConfirmacaoModal";
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Paginacao from '../Paginacao';
+import AsyncSelect from 'react-select/async';
 
 
 export default class CadastroBeneficios extends Component{
@@ -20,49 +21,22 @@ export default class CadastroBeneficios extends Component{
     super(props);
 
     this.state = {
-      idAluno : 0,
+      idBeneficio : 0,
       nome : "",
-      cpf : "",
-      rg : "",
-      dtNascimento : "",
-      sexo : "MASCULINO",
-      nomeMae : "",
-      cpfMae : "",
-      telDDDMae : "00",
-      telNroMae : "00",
-      nomePai : "",
-      cpfPai : "",
-      telDDDPai : "00",
-      telNroPai : "00",
-      emailContato : "",
-      celDDD : "00",
-      celNro : "", 
-      telDDD : "00",
-      telNro : "",
-      endLogradouro : "",
-      endNumero : "",
-      endComplemento : "",
-      endCEP : "",
-      endBairro : "",
-      endCidade : "",
-      endUF : "",
-      nroMatricula : "",
-      dtMatricula : "",
       nis : "",
-      transportador : "",
-      telDDDTransportador : "00",
-      telNroTransportador : "", 
-      unidadeEscolar : "",
-      ubsRef : "",   
-      alunos : [],    
+      dtRecebimento : "",
+      responsavelRecebimento : "", 
+      descBeneficio : "",  
+      beneficios : [],   
+      idAluno : 0, 
       textoBusca : null, 
       paramBusca : null, 
+      paramBuscaAluno : "1", 
       filtros : {
-        cpf : null,
-        nome : null,
-        nomePai : null,
-        nomeMae : null,
-        nis : null,
+        idAluno : null,
+        dtRecebimentoInicio : null,
+        dtRecebimentoFim : null,
+        responsavelRecebimento : null,
         paginacaoRequest : {
           size: 15,
           page: 1
@@ -143,12 +117,12 @@ export default class CadastroBeneficios extends Component{
 
     this.obterLista = () => {
       console.log('obterLista');
-      HttpService.listarAlunos(this.state.filtros)
+      HttpService.listarBeneficios(this.state.filtros)
       .then((response) => {
         if (response){
           this.setState(prevState => ({
             ...prevState,
-            alunos : response.data,
+            beneficios : response.data,
             filtros : {
               ...prevState.filtros,
               paginacaoResponse : {
@@ -176,29 +150,29 @@ export default class CadastroBeneficios extends Component{
     this.abrirConfirmacaoModal = () => {
       this.setState({
         confirmacaoModal : {
-          perguntaConfirmacao : 'Deseja realmente excluir o aluno? Isto NÃO poderá ser desfeito',
+          perguntaConfirmacao : 'Deseja realmente excluir o benefício? Isto NÃO poderá ser desfeito',
           show : true,
-          titulo : 'Deletar aluno',
+          titulo : 'Deletar Benefício',
         }
       });
     }
 
     this.handleSimConfirmacaoModal = () => {
-      HttpService.deletarAluno(this.state.idAluno)
+      HttpService.deletarBeneficio(this.state.idBeneficio)
       .then((response) => {
         if (response) {
           this.setState({
             sucessoModal : {
-              mensagem : 'Aluno removido com sucesso.',
+              mensagem : 'Benefício removido com sucesso.',
               show : true
             }
           });
 
         this.setState(prevState => ({
           ...prevState,
-          idAluno : 0,
+          idBeneficio : 0,
           isEdicao : false,
-          alunos : []
+          beneficios : []
         }), () => {
           this.obterLista();
         });
@@ -235,16 +209,17 @@ export default class CadastroBeneficios extends Component{
       });
     }
 
-    this.novoAluno = () => {
+    this.novoBeneficio = () => {
         this.setState({
-            idAluno : 0,
+            idBeneficio : 0,
             isEdicao: true
           });
     }
 
-    this.exibirAluno = (idAluno) => {
+    this.handlerSelecionarAluno = (e) => {
+
+      let idAluno = e.value;
       console.log('buscando aluno');
-      this.limparDados();
       HttpService.exibirAluno(idAluno)
       .then((response) => {
 
@@ -253,43 +228,32 @@ export default class CadastroBeneficios extends Component{
           ...prevState,  
           idAluno : data.idAluno,
           nome : data.nome,
-          cpf : data.cpf,
-          rg : data.rg,
-          dtNascimento : data.dtNascimento,
-          sexo : data.sexo,
-
-          nomeMae : data.mae === null? null : data.mae.nome,
-          cpfMae : data.mae === null? null : data.mae.cpf,
-          telDDDMae : data.mae === null? null :  data.mae.telContato === null? null : data.mae.telContato.telDDD,
-          telNroMae : data.mae === null? null : data.mae.telContato === null? null : data.mae.telContato.telNro,
-
-          nomePai : data.pai === null? null : data.pai.nome,
-          cpfPai : data.pai === null? null : data.pai.cpf,
-          telDDDPai : data.pai === null? null :  data.pai.telContato === null? null : data.pai.telContato.telDDD,
-          telNroPai : data.pai === null? null : data.pai.telContato === null? null : data.pai.telContato.telNro,
-
-          emailContato : data.emailContato,
-          celDDD : data.telCelular !== null? data.telCelular.telDDD : null,
-          celNro : data.telCelular !== null? data.telCelular.telNro : null,
-          telDDD : data.telFixo !== null? data.telFixo.telDDD : null,
-          telNro : data.telFixo !== null? data.telFixo.telNro : null,
-
-          endLogradouro : data.endResidencial !== null? data.endResidencial.endLogradouro : null,
-          endNumero : data.endResidencial !== null? data.endResidencial.endNumero : null,
-          endComplemento : data.endResidencial !== null? data.endResidencial.endComplemento : null,
-          endCEP : data.endResidencial !== null? data.endResidencial.endCEP : null,
-          endBairro : data.endResidencial !== null? data.endResidencial.endBairro : null,
-          endCidade : data.endResidencial !== null? data.endResidencial.endCidade : null,
-          endUF : data.endResidencial !== null? data.endResidencial.endUF : null,
-          nroMatricula : data.nroMatricula,
-          dtMatricula : data.dtMatricula,
           nis : data.nis,
-          transportador : data.transportador,
-          telDDDTransportador : data.telTransportador !== null? data.telTransportador.telDDD : null,
-          telNroTransportador : data.telTransportador !== null? data.telTransportador.telNro : null,
-          unidadeEscolar : data.unidadeEscolar,
-          ubsRef : data.ubsRef,
+          responsavelRecebimento : data.mae === null? null : data.mae.nome, //bota a mãe com default
+          isEdicao : true
+        }));
+      })
+      .catch((error) => {
+        new HttpServiceHandler().validarExceptionHTTP(error.response, this);
+      });
+    }
 
+    this.exibirBeneficio = (idBeneficio) => {
+      console.log('buscando bene');
+      this.limparDados();
+      HttpService.exibirBeneficio(idBeneficio)
+      .then((response) => {
+
+        let data = response.data;
+        this.setState(prevState => ({
+          ...prevState, 
+          idBeneficio : data.idBeneficio,
+          nome : data.aluno.nome,
+          nis : data.aluno.nis,
+          dtRecebimento : data.dtRecebimento,
+          responsavelRecebimento : data.responsavelRecebimento, 
+          descBeneficio : data.descBeneficio,  
+          idAluno : data.aluno.idAluno, 
           isEdicao: true
         }));
       })
@@ -298,64 +262,22 @@ export default class CadastroBeneficios extends Component{
       });
     }
 
-    this.salvarAluno = (e) => {
 
-      HttpService.salvarAluno({
-        nis : this.state.nis,
-        nroMatricula : this.state.nroMatricula,
-        dtMatricula : this.state.dtMatricula,
-        nome : this.state.nome,
-        cpf : this.state.cpf,
-        rg : this.state.rg,
-        dtNascimento : this.state.dtNascimento,
-        sexo : this.state.sexo,
-        emailContato : this.state.emailContato,        
-        mae : { 
-          nome : this.state.nomeMae,
-          cpf : this.state.cpfMae,
-          telContato : { 
-            telDDD : this.state.telDDDMae,    
-            telNro : this.state.telNroMae
-          }
-        },
-        pai : {
-            nome : this.state.nomePai,
-            cpf : this.state.cpfPai,
-            telContato : { 
-              telDDD : this.state.telDDDPai,    
-              telNro : this.state.telNroPai
-            }
-        },
-        telCelular : { 
-          telDDD : this.state.celDDD,telNro : this.state.celNro
-        },
-        telFixo : { 
-          telDDD : this.state.telDDD,telNro : this.state.telNro
-        },
-        endResidencial : {
-          endLogradouro : this.state.endLogradouro,
-          endNumero : this.state.endNumero,
-          endComplemento : this.state.endComplemento,
-          endCEP : this.state.endCEP,
-          endBairro : this.state.endBairro,
-          endCidade : this.state.endCidade,
-          endUF : this.state.endUF
-        },
-        transportador: this.state.transportador,
-        telTransportador : { 
-          telDDD : this.state.telDDDTransportador,    
-          telNro : this.state.telNroTransportador
-        },
-        unidadeEscolar: this.state.unidadeEscolar,
-        ubsRef: this.state.ubsRef
+    this.salvarBeneficio = (e) => {
+
+      HttpService.salvarBeneficio({
+        idAluno : this.state.idAluno,
+        dtRecebimento : this.state.dtRecebimento,
+        responsavelRecebimento : this.state.responsavelRecebimento,
+        descBeneficio : this.state.descBeneficio
       },
-      this.state.idAluno
+      this.state.idBeneficio
       )
       .then((response) => {
         if (response) {
           this.setState({
             sucessoModal : {
-              mensagem : 'Aluno cadastrado com sucesso.',
+              mensagem : 'Benefício cadastrado com sucesso.',
               show : true
             }
           });
@@ -363,9 +285,15 @@ export default class CadastroBeneficios extends Component{
 
       this.setState(prevState => ({
         ...prevState,
+        idBeneficio : 0,
+        nome : "",
+        nis : "",
+        dtRecebimento : "",
+        responsavelRecebimento : "",
         idAluno : 0,
+        descBeneficio : "",
         isEdicao : false,
-        alunos : []
+        beneficios : []
       }), () => {
         this.obterLista();
       });
@@ -377,108 +305,12 @@ export default class CadastroBeneficios extends Component{
 
 
     }
-    this.deletarAluno = (e) => {
+    this.deletarBeneficio = (e) => {
       this.abrirConfirmacaoModal();
     }
 
     this.abrirTurmas = () => {
       window.location = './lista-turmas?idAluno=' + this.state.idAluno;
-    }
-
-    this.buscarAluno = (e) => {
-
-      
-      console.log('paramBusca ' + this.state.paramBusca);
-      console.log('textoBusca ' + this.state.textoBusca);
-      console.log('filtros ' + this.state.filtros);
-
-      let textoParaBusca = this.state.textoBusca;
-
-
-      if (this.state.textoBusca === null){
-        console.log('this.state.textoBusca === null ');
-        this.setState(prevState => ({
-          ...prevState
-          }
-        ),() => {this.obterLista();}
-        );
-        return;
-      }
-
-      switch (this.state.paramBusca) {
-        case '1':
-          console.log('s1');
-          this.setState(prevState => ({
-            ...prevState,
-            filtros : {
-              ...prevState.filtros,
-              nome : textoParaBusca
-              }
-            }
-          ),() => {this.obterLista();}
-          );
-          break;
-        case '2':
-          console.log('s2');
-          this.setState(prevState => ({
-            ...prevState,
-            filtros : {
-              ...prevState.filtros,
-              cpf : textoParaBusca
-              }
-            }
-            ),() => {this.obterLista();}
-            );
-          break;
-        case '3':
-          console.log('s3');
-          this.setState(prevState => ({
-            ...prevState,
-            filtros : {
-              ...prevState.filtros,
-              nomeMae : textoParaBusca
-              }
-            }
-            ),() => {this.obterLista();}
-            );
-          break;
-        case '4':
-          console.log('s4');
-          this.setState(prevState => ({
-            ...prevState,
-            filtros : {
-              ...prevState.filtros,
-              nomePai : textoParaBusca
-              }
-            }
-            ),() => {this.obterLista();}
-            );
-          break;
-          case '5':
-            console.log('s5');
-            this.setState(prevState => ({
-              ...prevState,
-              filtros : {
-                ...prevState.filtros,
-                nis : textoParaBusca
-                }
-              }
-              ),() => {this.obterLista();}
-              );
-            break;
-        default:
-          console.log('sd');
-          this.setState(prevState => ({
-            ...prevState,
-            paramBusca: 1,
-            filtros : {
-              ...prevState.filtros,
-              nome : textoParaBusca
-              }
-            }
-            ),() => {this.obterLista();}
-            );
-        } 
     }
 
     this.handleChange = (e) => {
@@ -515,15 +347,6 @@ export default class CadastroBeneficios extends Component{
         });
      } 
     }
-
-    this.radiosBusca = [
-      { name: 'Nome', value: '1' },
-      { name: 'CPF', value: '2' },
-      { name: 'Nome da Mãe', value: '3' },
-      { name: 'Nome do Pai', value: '4' },
-      { name: 'NIS', value: '5' },
-    ];
-
   
     this.limparFiltros = (e) => {
       console.log('limpando filtros');
@@ -531,11 +354,10 @@ export default class CadastroBeneficios extends Component{
         ...prevState,
         filtros : {
           ...prevState.filtros,
-          cpf : null,
-          nome : null,
-          nomePai : null,
-          nomeMae : null,
-          nis : null 
+          idAluno : null,
+          dtRecebimentoInicio : null,
+          dtRecebimentoFim : null,
+          responsavelRecebimento : null
           }
         }
       ));
@@ -545,44 +367,88 @@ export default class CadastroBeneficios extends Component{
       console.log('limpando dados');
       this.setState(prevState => ({
         ...prevState,
-        idAluno : 0,
+        idBeneficio : 0,
         nome : "",
-        cpf : "",
-        rg : "",
-        dtNascimento : "",
-        sexo : "MASCULINO",
-        nomeMae : "",
-        cpfMae : "",
-        telDDDMae : "00",
-        telNroMae : "00",
-        nomePai : "",
-        cpfPai : "",
-        telDDDPai : "00",
-        telNroPai : "00",
-        emailContato : "",
-        celDDD : "00",
-        celNro : "00", 
-        telDDD : "00",
-        telNro : "00",
-        endLogradouro : "",
-        endNumero : "",
-        endComplemento : "",
-        endCEP : "",
-        endBairro : "",
-        endCidade : "",
-        endUF : "",
-        nroMatricula : "",
-        dtMatricula : "",
         nis : "",
-        transportador : "",
-        telDDDTransportador : "00",
-        telNroTransportador : "00", 
-        unidadeEscolar : "",
-        ubsRef : ""    
+        dtRecebimento : "",
+        responsavelRecebimento : "",
+        idAluno : 0,
+        descBeneficio : ""
       }  
       )
       );
     }
+
+    this.gerarFiltroBuscaAluno = (textoParaBusca) => {
+
+      
+      let filtrosAluno = {
+        cpf : null,
+        nome : null,
+        nomePai : null,
+        nomeMae : null,
+        nis : null,
+        paginacaoRequest : {
+          size: 15,
+          page: 1
+        },
+        paginacaoResponse : {
+          quantidade : null,
+          hasProxima : null
+        }
+      };
+
+      console.log('paramBusca ' + this.state.paramBuscaAluno);
+      console.log('textoBusca ' + textoParaBusca);
+
+      if (textoParaBusca === null){
+        console.log('this.state.textoBusca === null ');
+        return filtrosAluno;
+      }
+
+      switch (this.state.paramBuscaAluno) {
+        case '1':
+          console.log('s1');
+          filtrosAluno.nome = textoParaBusca;
+          break;
+        case '2':
+          console.log('s2');
+          filtrosAluno.cpf = textoParaBusca;
+          break;
+        case '3':
+          console.log('s3');
+          filtrosAluno.nomeMae = textoParaBusca;
+          break;
+        case '4':
+          console.log('s4');
+          filtrosAluno.nomePai = textoParaBusca;
+          break;
+        case '5':
+          filtrosAluno.nis = textoParaBusca;
+          break;
+        default:
+          filtrosAluno.nome = textoParaBusca;
+        } 
+        return filtrosAluno;
+    }
+
+    this.getByValue = (map, searchValue) => {
+      for (var i=0; i < map.length; i++) {
+        if (map[i].value === searchValue) {
+            return map[i].name;
+        }
+      }
+    }
+    
+    this.radiosBuscaAluno = [
+      { name: 'Nome', value: '1' },
+      { name: 'CPF', value: '2' },
+      { name: 'Nome da Mãe', value: '3' },
+      { name: 'Nome do Pai', value: '4' },
+      { name: 'NIS', value: '5' },
+    ];
+
+    
 
   }
 
@@ -590,10 +456,34 @@ export default class CadastroBeneficios extends Component{
   
 
   render(){
+
+    const promiseOptionsAlunoNome = (inputValue) => {
+      // new Promise((resolve) => {
+      //   setTimeout(() => {
+      //     resolve(filterColors(inputValue));
+      //   }, 1000);
+      // }
+
+      let listaAlunos = [];
+      let request = this.gerarFiltroBuscaAluno(inputValue);
+      request.paginacaoRequest.size = 30;
+
+      return HttpService.listarAlunos(request)      
+      .then((response) => {
+        response.data.forEach((aluno) => {
+          listaAlunos.push({
+            value : aluno.idAluno,
+            label : aluno.nome
+          });          
+        });
+        return listaAlunos;
+      });
+    };
+
     return (
       <div>
 
-        <Container className="containerListaAlunosTurma" fluid>
+        <Container className="containerCadastroBeneficios" fluid>
 
           <Row>
             <Col xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 10, offset: 1}} lg={{span: 10, offset: 1}}>
@@ -603,395 +493,21 @@ export default class CadastroBeneficios extends Component{
 
           <Row>
             <Col xs={{span: 6, offset: 0}} sm={{span : 6, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
-              <h3 className="Aluno">Alunos</h3>
+              <h3 className="Aluno">Benefícios</h3>
             </Col>
           </Row>
-
-        
-          <Row className="mb-3">
-            <Col xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
-              <Form>
-                <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.dadosPessoais">
-                    <Form.Label>Nome</Form.Label>
-                    <Form.Control type="text" placeholder={"Digite o nome completo"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.nome} name="nome" required autoComplete="false" maxLength="100"
-                    />
-                </Form.Group>
-
-                <Row className="mb-3">
-                <Form.Group as={Col} controlId="alunoForm.sexo">
-                  {
-                    (!this.state.isEdicao) &&
-                    <div>
-                      
-                          <Form.Label>Sexo</Form.Label>
-                          <Form.Control type="text" placeholder={this.state.sexo} disabled value={this.state.sexo}/>
-
-                    </div>
-                  }
-                  {
-                    (this.state.isEdicao) &&
-                    <div>
-                        <br/>
-                        <FloatingLabel className="inputNovoAluno" controlId="floatingSelectGrid" label="Sexo">
-                          <Form.Select aria-label="Floating label" onChange={this.handleChange} value={this.state.sexo} name="sexo" >
-                            <option value="MASCULINO">Masculino</option>
-                            <option value="FEMININO">Feminino</option>
-                            <option value="DESCONHECIDO">Outro</option>
-                          </Form.Select>
-                        </FloatingLabel>      
-                                  
-                    </div>
-                  }
-                </Form.Group>  
-                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.dtNascimento">
-                    <Form.Label>Data de nascimento</Form.Label>
-                    <Form.Control type="text" placeholder={"DD/MM/AAAA"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.dtNascimento} name="dtNascimento" required autoComplete="false" maxLength="10"
-                    />  
-                  </Form.Group>
-
-                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.email">
-                    <Form.Label>E-mail</Form.Label>
-                    <Form.Control type="email" placeholder={"email para contato"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.emailContato} name="emailContato" required autoComplete="false" maxLength="100"
-                    />  
-                  </Form.Group>
-                </Row>
-
-                <div>
-                <Card className="mb-3">
-                  <Card.Header>Dados da Mãe</Card.Header>
-                  <Row className="mb-3">
-      
-                    <Col xs={5}>
-                    <Form.Group className="ps-2" controlId="alunoForm.nomeMae">
-                      <Form.Label>Nome da mãe</Form.Label>
-                      <Form.Control type="text" placeholder={"Nome completo da mãe do Aluno"} disabled={!this.state.isEdicao}   
-                      onChange={this.handleChange} value={this.state.nomeMae} name="nomeMae" required autoComplete="false" maxLength="100"
-                      />
-                    </Form.Group>
-                    </Col>
-
-                    <Col xs={3}>
-                      <Form.Label>CPF</Form.Label>
-                      <Form.Control type="text" placeholder={"Apenas números"} disabled={!this.state.isEdicao}  
-                      onChange={this.handleChangeNumerico} value={this.state.cpfMae} name="cpfMae" required autoComplete="false" maxLength="11"
-                      />
-                    </Col>
-
-
-                    <Col xs={1}>
-                      <Form.Label>DDD</Form.Label>
-                      <Form.Control type="text" placeholder={"011"} disabled={!this.state.isEdicao}  
-                      onChange={this.handleChangeNumerico} value={this.state.telDDDMae} name="telDDDMae" required autoComplete="false" maxLength="3" 
-                      />
-                    </Col>
-
-                    <Col xs={3}>
-                    <Form.Group className="pe-2" controlId="alunoForm.telNroMae">
-                      <Form.Label>Número de contato</Form.Label>
-                      <Form.Control type="text" placeholder={"Apenas números"} disabled={!this.state.isEdicao}  
-                      onChange={this.handleChangeNumerico} value={this.state.telNroMae} name="telNroMae" required autoComplete="false" maxLength="9"
-                      />
-                    </Form.Group>
-                    </Col>
-                  </Row>  
-                </Card>
-                </div>                
-
-                <div>
-                <Card className="mb-3">
-                  <Card.Header>Dados do Pai</Card.Header>
-                  <Row className="mb-3">
-                  <Col xs={5}>
-                  <Form.Group className="ps-2" controlId="alunoForm.nomePai">
-                    <Form.Label>Nome</Form.Label>
-                      <Form.Control type="text" placeholder={"Nome completo do pai do Aluno"} disabled={!this.state.isEdicao}  
-                      onChange={this.handleChange} value={this.state.nomePai} name="nomePai" autoComplete="false" maxLength="100"
-                      />   
-                    </Form.Group>       
-                    </Col>
-
-                    <Col xs={3}>
-                      <Form.Label>CPF</Form.Label>
-                      <Form.Control type="text" placeholder={"Apenas números"} disabled={!this.state.isEdicao}  
-                      onChange={this.handleChangeNumerico} value={this.state.cpfPai} name="cpfPai" autoComplete="false" maxLength="11"
-                      />
-                    </Col>
-                    <Col xs={1}>
-                      <Form.Label>DDD</Form.Label>
-                      <Form.Control type="text" placeholder={"011"} disabled={!this.state.isEdicao}  
-                      onChange={this.handleChangeNumerico} value={this.state.telDDDPai} name="telDDDPai" autoComplete="false" maxLength="3" 
-                      />
-                    </Col>
-                    <Col xs={3}>
-                    <Form.Group className="pe-2" controlId="alunoForm.telNroPai">
-                      <Form.Label>Número de contato</Form.Label>
-                      <Form.Control type="text" placeholder={"Apenas números"} disabled={!this.state.isEdicao}  
-                      onChange={this.handleChangeNumerico} value={this.state.telNroPai} name="telNroPai" autoComplete="false" maxLength="9" 
-                      />
-                    </Form.Group>   
-                    </Col>
-
-                  </Row>
-                </Card>  
-                </div>
-
-                <Card className="mb-3">
-                <Card.Header>Documentos do Aluno</Card.Header>
-                <Row className="mb-3">
-                  <Col>
-                  <Form.Group className="ps-2" controlId="alunoForm.rg">
-                    <Form.Label>RG</Form.Label>
-                    <Form.Control type="text" placeholder={"Digite o RG sem pontuação. Somente números"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChangeNumerico} value={this.state.rg} name="rg" required autoComplete="false" maxLength="10"
-                    />
-                  </Form.Group></Col>
-                  <Col>
-                  <Form.Group controlId="alunoForm.cpf">
-                    <Form.Label>CPF</Form.Label>
-                    <Form.Control type="text" placeholder={"Digite o CPF sem pontuação. Somente números"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChangeNumerico} value={this.state.cpf} name="cpf" required autoComplete="false" maxLength="11"
-                    />
-                  </Form.Group></Col>
-                  
-                  <Col>
-                  <Form.Group className="pe-2" controlId="alunoForm.nis">
-                    <Form.Label>NIS</Form.Label>
-                    <Form.Control type="text" placeholder={"NIS. Sem pontaução"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChangeNumerico} value={this.state.nis} name="nis" required autoComplete="false" maxLength="11"
-                    />
-                  </Form.Group></Col>
-                </Row>
-                </Card>
-
-                <Row className="mb-3">
-                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.nroMatricula">
-                    <Form.Label>Número de Matricula</Form.Label>
-                    <Form.Control type="text" placeholder={"Identificação da matricula"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.nroMatricula} name="nroMatricula" required autoComplete="false" maxLength="50"
-                    />
-                  </Form.Group>
-                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.dtMatricula">
-                    <Form.Label>Data da Matricula</Form.Label>
-                    <Form.Control type="text" placeholder={"DD/MM/AAAA"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.dtMatricula} name="dtMatricula" required autoComplete="false" maxLength="10"
-                    />                  
-                  </Form.Group>
-                </Row>
-
-                <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.telefones">
-
-                  <Row>
-                    <Col>
-                      <Form.Label>DDD Celular</Form.Label>
-                      <Form.Control type="text" placeholder={"011"} disabled={!this.state.isEdicao}  
-                      onChange={this.handleChangeNumerico} value={this.state.celDDD} name="celDDD" required autoComplete="false" maxLength="3" 
-                      />
-                    </Col>
-
-                    <Col xs={8}>
-                      <Form.Label>Número do celular</Form.Label>
-                      <Form.Control type="text" placeholder={"999999999. Somente números"} disabled={!this.state.isEdicao}  
-                      onChange={this.handleChangeNumerico} value={this.state.celNro} name="celNro" required autoComplete="false" maxLength="9" 
-                      />
-                    </Col>
-                  </Row>
-
-                  <Row>
-                    <Col>                
-                    <Form.Label>DDD Telefone fixo</Form.Label>
-                    <Form.Control type="text" placeholder={"011"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChangeNumerico} value={this.state.telDDD} name="telDDD" autoComplete="false" maxLength="3" 
-                    />
-                    </Col>
-
-                    <Col xs={8}>                 
-                    <Form.Label>Telefone fixo</Form.Label>
-                    <Form.Control type="text" placeholder={"99999999. Somente números"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChangeNumerico} value={this.state.telNro} name="telNro" autoComplete="false" maxLength="9" 
-                    />
-                    </Col>  
-                  </Row>
-                                
-
-                </Form.Group>
-
-                <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.Enderecos">
-                  <Form.Label>Logradouro</Form.Label>
-                  <Form.Control type="text" placeholder={"Rua tal tal tal"} disabled={!this.state.isEdicao}  
-                  onChange={this.handleChange} value={this.state.endLogradouro} name="endLogradouro" required autoComplete="false"  maxLength="200"
-                  />
-
-                  <Row>
-                    <Col>                      
-                    <Form.Label>Número</Form.Label>
-                    <Form.Control type="text" placeholder={"99999"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.endNumero} name="endNumero" required autoComplete="false"  maxLength="20"
-                    />
-                    </Col>                      
-                    <Col>  
-                    <Form.Label>Complemento</Form.Label>
-                    <Form.Control type="text" placeholder={"Casa 1 / ap10 / cj10"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.endComplemento} name="endComplemento" autoComplete="false"  maxLength="50"
-                    />
-                    </Col>                      
-                    <Col>  
-                    <Form.Label>CEP</Form.Label>
-                    <Form.Control type="text" placeholder={"11111111. Somente números"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChangeNumerico} value={this.state.endCEP} name="endCEP" required autoComplete="false"  maxLength="8"
-                    />
-                    </Col>                      
-                  </Row>
-
-                  <Row>
-                    <Col>                      
-                    <Form.Label>Bairro</Form.Label>
-                    <Form.Control type="text" placeholder={"Insira o Bairro"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.endBairro} name="endBairro" required autoComplete="false"  maxLength="50"
-                    />
-                    </Col>                    
-                    <Col>  
-                    <Form.Label>Cidade</Form.Label>
-                    <Form.Control type="text" placeholder={"São Paulo"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.endCidade} name="endCidade" required autoComplete="false"  maxLength="50"
-                    />    
-                    </Col>  
-                    <Col>                    
-                    {
-                      (!this.state.isEdicao) &&
-                      <div>
-                        <Form.Group as={Col} controlId="alunoForm.UF">
-                            <Form.Label>UF</Form.Label>
-                            <Form.Control type="text" placeholder={this.state.endUF} disabled value={this.state.endUF}/>
-                        </Form.Group>
-                      </div>
-                    }
-                    {
-                      (this.state.isEdicao) &&
-                      <div>
-                        <br/>
-                        <FloatingLabel className="inputNovoAluno" controlId="floatingSelectGrid" label="UF" >
-                          <Form.Select aria-label="Floating label" onChange={this.handleChange}  value={this.state.endUF} name="endUF" >
-                          <option value="AC">Acre</option> <option value="AL">Alagoas</option> <option value="AP">Amapá</option> <option value="AM">Amazonas</option> <option value="BA">Bahia</option> 
-                          <option value="CE">Ceará</option> <option value="DF">Distrito Federal</option> <option value="ES">Espírito Santo</option> <option value="GO">Goiás</option> 
-                          <option value="MA">Maranhão</option> <option value="MT">Mato Grosso</option> <option value="MS">Mato Grosso do Sul</option> <option value="MG">Minas Gerais</option> 
-                          <option value="PA">Pará</option> <option value="PB">Paraíba</option> <option value="PR">Paraná</option> <option value="PE">Pernambuco</option> <option value="PI">Piauí</option> 
-                          <option value="RJ">Rio de Janeiro</option> <option value="RN">Rio Grande do Norte</option> <option value="RS">Rio Grande do Sul</option> <option value="RO">Rondônia</option> 
-                          <option value="RR">Roraima</option> <option value="SC">Santa Catarina</option> <option value="SP">São Paulo</option> <option value="SE">Sergipe</option> 
-                          <option value="TO">Tocantins</option>
-                          </Form.Select>
-                        </FloatingLabel>                    
-                      </div>
-                    }      
-                  </Col>                        
-                </Row>     
-                  
-                <Row className="mb-3">
-                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.ubsref">
-                    <Form.Label>UBS de referência</Form.Label>
-                    <Form.Control type="text" placeholder={"UBS de referência"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.ubsRef} name="ubsRef" required autoComplete="false"  maxLength="200"
-                    />
-                  </Form.Group>
-
-                  <Form.Group as={Col} className="inputNovoAluno" controlId="alunoForm.unidadeEscolar ">
-                    <Form.Label>Unidade Escolar</Form.Label>
-                    <Form.Control type="text" placeholder={"UBS de referência"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.unidadeEscolar} name="unidadeEscolar" required autoComplete="false"  maxLength="200"
-                    />
-                  </Form.Group>
-                </Row>
-
-                <Card className="mb-3">
-                <Card.Header>Dados do Transportador</Card.Header>
-                <Row className="mb-3">
-                  <Col>
-                  <Form.Group className="ps-2" controlId="alunoForm.transportador">
-                    <Form.Label>Nome</Form.Label>
-                    <Form.Control type="text" placeholder={"Nome do transportador"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChange} value={this.state.transportador} name="transportador" required autoComplete="false" maxLength="100"
-                    />
-                  </Form.Group></Col>
-                  <Col>
-                  <Form.Group controlId="alunoForm.transportadorDDD">
-                    <Form.Label>DDD</Form.Label>
-                    <Form.Control type="text" placeholder={"DDD"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChangeNumerico} value={this.state.telDDDTransportador} name="telDDDTransportador" autoComplete="false" maxLength="3"
-                    />
-                  </Form.Group></Col>
-                  
-                  <Col>
-                  <Form.Group className="pe-2" controlId="alunoForm.transportadorTelNro">
-                    <Form.Label>Telefone</Form.Label>
-                    <Form.Control type="text" placeholder={"Apenas números"} disabled={!this.state.isEdicao}  
-                    onChange={this.handleChangeNumerico} value={this.state.telNroTransportador} name="telNroTransportador" autoComplete="false" maxLength="9"
-                    />
-                  </Form.Group></Col>
-                </Row>
-                </Card>
-
-                </Form.Group>
-              
-              </Form>
-            </Col>
-          </Row>
-
-          <Row className="mb-3">
-            <Col xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
-              <Button onClick={this.novoAluno} disabled={this.state.isEdicao}>Novo</Button>
-              <Button variant="success" className="btnSalvarAluno" onClick={this.salvarAluno} disabled={!this.state.isEdicao}>Salvar</Button>
-              <Button variant="secondary" className="btnCancelar" onClick={() => {window.location = './cadastro-alunos'}} disabled={!this.state.isEdicao}>Cancelar</Button>
-              <Button variant="danger" className="btnDeletarAluno" onClick={this.deletarAluno} disabled={this.state.idAluno == 0}>Deletar</Button>            
-
-              <OverlayTrigger
-                key="right"
-                placement="right"
-                overlay={
-                  <Tooltip id="tooltip-disabled">
-                  {(this.state.isEdicao && this.state.idAluno === 0 ) && <strong>Você primeiro deve salvar o novo aluno, para depois adicionia-lo em uma turma.</strong>}
-                  {(!(this.state.isEdicao && this.state.idAluno === 0) ) && <strong>Adiciona este aluno a uma das turmas existentes.</strong>}
-                  </Tooltip>}
-                  >  
-                <span className="d-inline-block">
-                  <Button className="btnAddTurma" onClick={this.abrirTurmas} disabled={!this.state.isEdicao || this.state.idAluno === 0 }>Adicionar à turma</Button>    
-                </span>
-                </OverlayTrigger>
-            </Col>
-          </Row>
-
 
           <Col style={{marginTop : "60px"}} xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
-          <InputGroup >
-            <FormControl 
-              placeholder="Buscar pela opção abaixo"
-              aria-label="Buscar pela opção abaixo"
-              aria-describedby="Buscar"
-              name = "textoBusca"
-              value = {this.textoBusca}
-              onChange={this.handleChange} 
-            />
-
-            <Button id="btnBuscar"
-             onClick={this.buscarAluno}
-            >
-              Buscar
-            </Button>
-          </InputGroup>
-          </Col>
-
-          <Col style={{marginTop : "10px"}} xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
           <ButtonGroup>
-            {this.radiosBusca.map((radio, idx) => (
+            {this.radiosBuscaAluno.map((radio, idx) => (
               <ToggleButton
                 key={idx}
                 id={`radio-${idx}`}
                 type="radio"
-                variant={this.state.paramBusca === radio.value ? 'outline-primary' : 'outline-secondary'}
-                name="paramBusca"
+                variant={this.state.paramBuscaAluno === radio.value ? 'outline-primary' : 'outline-secondary'}
+                name="paramBuscaAluno"
                 value={radio.value}
-                checked={this.state.paramBusca === radio.value}
+                checked={this.state.paramBuscaAluno === radio.value}
                 onChange={this.handleChange}
               >
                 {radio.name}
@@ -1000,35 +516,121 @@ export default class CadastroBeneficios extends Component{
           </ButtonGroup>
           </Col>
 
+          <Row className="mb-3">
+            <Col style={{marginTop : "10px"}} xs={{span: 4, offset: 0}} sm={{span : 4, offset: 0}}  md={{span : 4, offset: 0}} lg={{span: 4, offset: 1}}>
+              <AsyncSelect placeholder={'Buscar aluno beneficiado usando o ' + this.getByValue(this.radiosBuscaAluno,this.state.paramBuscaAluno)}  
+              noOptionsMessage={() => {return "Nenhum aluno encontrado"}} onChange={this.handlerSelecionarAluno} loadOptions={promiseOptionsAlunoNome} 
+              />         
+            </Col>
+          </Row>
+
+        
+          <Row className="mb-3">
+            <Col xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
+              <Form>
+                <Row>
+                  <Col xs={3}>
+                    <OverlayTrigger
+                      key="bottom"
+                      placement="bottom"
+                      overlay={
+                      <Tooltip id="tooltip-disabled">
+                      <strong>Este dado é obtido do cadastro. Para altera-lo é necessário alterar o cadastro do aluno</strong>
+                      </Tooltip>}
+                    >  
+                      <Form.Group className="inputBeneficio" controlId="beneficiosForm.dadosPessoais">
+                          <Form.Label>Nome</Form.Label>
+                          <Form.Control type="text" disabled="true" value={this.state.nome} name="nome" required autoComplete="false" maxLength="100"
+                          />
+                      </Form.Group>
+                    </OverlayTrigger>
+                  </Col>
+                  <Col xs={3}>
+                    <OverlayTrigger
+                      key="bottom"
+                      placement="bottom"
+                      overlay={
+                      <Tooltip id="tooltip-disabled">
+                      <strong>Este dado é obtido do cadastro. Para altera-lo é necessário alterar o cadastro do aluno</strong>
+                      </Tooltip>}
+                    >  
+                      <Form.Group className="inputBeneficio" controlId="beneficiosForm.dadosPessoais">
+                          <Form.Label>NIS</Form.Label>
+                          <Form.Control type="text" disabled="true" value={this.state.nis} name="nis" required autoComplete="false" maxLength="11"
+                          />
+                      </Form.Group>
+                    </OverlayTrigger>
+                  </Col>
+
+                  <Col xs={3}>
+                    <Form.Group className="inputBeneficio" controlId="beneficiosForm.dtRecebimento">
+                        <Form.Label>Data do Recebimento</Form.Label>
+                        <Form.Control type="text" placeholder={"DD/MM/AAAA"} disabled={!this.state.isEdicao}  
+                        onChange={this.handleChange} value={this.state.dtRecebimento} name="dtRecebimento" required autoComplete="false" maxLength="10"
+                        />  
+                    </Form.Group>
+                  </Col>
+
+                  <Col xs={3}>
+                    <Form.Group className="inputBeneficio" controlId="beneficiosForm.responsavelRecebimento">
+                        <Form.Label>Responsável pelo recebimento</Form.Label>
+                        <Form.Control type="text" placeholder={"Responsável"} disabled={!this.state.isEdicao} onChange={this.handleChange} 
+                        value={this.state.responsavelRecebimento} name="responsavelRecebimento" required autoComplete="false" maxLength="100"
+                        />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+
+                <Form.Group as={Col} className="inputBeneficio" controlId="beneficiosForm.descBeneficio">
+                    <Form.Label>Detalhamento</Form.Label>
+                    <Form.Control as="textarea" rows={4} disabled={!this.state.isEdicao}  placeholder={"Descreva qual foi o benefício fornecido, máximo de 500 caractéres"} onChange={this.handleChange}
+                    value={this.state.descBeneficio} name="descBeneficio" required autoComplete="false" maxLength="500"
+                    />
+                </Form.Group>
+                
+              </Form>
+            </Col>
+          </Row>
+
+          <Row className="mb-3">
+            <Col xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
+              <Button onClick={this.novoBeneficio} disabled={this.state.isEdicao}>Novo</Button>
+              <Button variant="success" className="btnSalvarBeneficio" onClick={this.salvarBeneficio} disabled={!this.state.isEdicao}>Salvar</Button>
+              <Button variant="secondary" className="btnCancelar" onClick={() => {window.location = './cadastro-beneficios'}} disabled={!this.state.isEdicao}>Cancelar</Button>
+              <Button variant="danger" className="btnDeletarBeneficio" onClick={this.deletarBeneficio} disabled={this.state.idBeneficio == 0}>Deletar</Button>            
+            </Col>
+          </Row>
+
           <Row style={{marginTop : "60px"}}>
             <Col xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
-              <h4>Alunos Cadastrados </h4>
+              <h4>Benefícios Cadastrados </h4>
               <Table responsive="sm" striped bordered hover>
                 <thead>
                   <tr>
                       <th>#</th>
                       <th>Nome</th>
-                      <th>Nome da mãe</th>
-                      <th>Número de Matricula</th>
-                      <th>Número do NIS</th>
-                      <th>Editar</th>
+                      <th>NIS</th>
+                      <th>Data do Recebimento</th>
+                      <th>Responsável pelo Recebimento</th>
+                      <th>Detalhes</th>
                   </tr>
                 </thead>
 
                 <tbody>
                 {
-                    this.state.alunos.map((aluno) => {
+                    this.state.beneficios.map((beneficio) => {
                     return (
                         
-                        <tr key={aluno.idAluno}>
-                        <td>{aluno.idAluno}</td>
-                        <td>{aluno.nome}</td>
-                        <td>{aluno.nomeMae}</td>
-                        <td>{aluno.nroMatricula}</td>
-                        <td>{aluno.NIS}</td>
+                        <tr key={beneficio.idBeneficio}>
+                        <td>{beneficio.idBeneficio}</td>
+                        <td>{beneficio.nomeAluno}</td>
+                        <td>{beneficio.nisAluno}</td>
+                        <td>{beneficio.dtRecebimento}</td>
+                        <td>{beneficio.responsavelRecebimento}</td>
                         <td style={{textAlign : "center"}}>
                             {/* <Button onClick={() => {this.visualizarAula(aula.idAula)}}>Visualizar Aula</Button> */}
-                            <Button onClick={() => {this.exibirAluno(aluno.idAluno)}}>Editar Aluno</Button>
+                            <Button onClick={() => {this.exibirBeneficio(beneficio.idBeneficio)}}>Editar/Ver Detalhes</Button>
                         </td>
                         </tr>
                     )
@@ -1061,13 +663,14 @@ export default class CadastroBeneficios extends Component{
   }
 
   componentDidMount() {
-    const parsed = queryString.parse(window.location.search);
+    //const parsed = queryString.parse(window.location.search);
 
       
     this.obterLista();
-    if (parsed.idAluno !== null && typeof parsed.idAluno != "undefined") {
-      this.exibirAluno(parsed.idAluno);
-    }
+
+    //if (parsed.idAluno !== null && typeof parsed.idAluno != "undefined") {
+     // this.exibirAluno(parsed.idAluno);
+   // }
     
   }
 
