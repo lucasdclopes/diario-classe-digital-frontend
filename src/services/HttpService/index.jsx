@@ -3,8 +3,8 @@ import UsuarioLogadoDto from '../../dto/UsuarioLogadoDto';
 
 
 const host = window.location.protocol + "//" + window.location.host;
-const urlBase = 'http://localhost/api'; //<- testes local
-//const urlBase = host + '/api'; //<- build acesso na rede
+//const urlBase = 'http://localhost/api'; //<- testes local
+const urlBase = host + '/api'; //<- build acesso na rede
 const defaultHeaders = {
   headers : {
     "Content-Type": "application/json",

@@ -60,18 +60,15 @@ export default class App extends Component {
 
           <Row>
             <Col xs={12} sm={{span : 10, offset: 1}} md={{span : 12, offset: 0}} lg={12} className="text-center paddingContainer">
-              <h3>Este sistema foi desenhado para o Colégio São Gabriel</h3>
-              <p>O colégio São Gabriel está localizado no Centro de São Vicente.</p>
+              <h3>Este sistema foi desenhado para o projeto PI Univesp</h3>
             </Col>          
           </Row>
 
           <Row>
             <Col xs={12} sm={12} md={12} lg={12}>
-              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1764.7889757606388!2d-46.38807594702617!3d-23.967506985058083!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce1c90ead22b69%3A0xc941f3eb88a03319!2sCol%C3%A9gio%20Passionista%20S%C3%A3o%20Gabriel!5e0!3m2!1spt-BR!2sbr!4v1637799059666!5m2!1spt-BR!2sbr" width="100%" height="450" style={{border:0}} allowFullScreen loading="lazy"></iframe>
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14629.110509232349!2d-46.72552257330005!3d-23.558470445306767!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce57c2aeeace6b%3A0xe2ea1dd666944780!2sUniversidade%20Virtual%20do%20Estado%20de%20S%C3%A3o%20Paulo%20-%20Univesp!5e0!3m2!1spt-BR!2sbr!4v1656981582628!5m2!1spt-BR!2sbr" width="100%" height="450" style={{border:0}} allowFullScreen loading="lazy"></iframe>
             </Col>
           </Row>
-
-          <Footer/>
         </Container>
       </div>
     );
